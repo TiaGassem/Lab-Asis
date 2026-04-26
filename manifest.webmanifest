@@ -1,0 +1,17 @@
+{
+  "name": "Lab Asis",
+  "short_name": "Lab Asis",
+  "description": "A multilingual scientific lab and research workspace for students and researchers, created by Tasnim Gassem.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#00A898",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

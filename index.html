@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Lab Asis is a multilingual scientific lab and research workspace for students and researchers, created by Tasnim Gassem."
+    />
+    <meta name="theme-color" content="#00A898" />
+    <title>Lab Asis</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Scientific Lab and Research Workspace</p>
+          <h1 id="app-title" data-i18n="app_name">Lab Asis</h1>
+          <p class="subtitle">Lab Asis | لاب أسيس | Created by Tasnim Gassem</p>
+        </div>
+        <button id="install-app" class="outline-button hidden" type="button">
+          Install App
+        </button>
+      </header>
+
+      <section id="timer-live-banner" class="timer-live-banner hidden" aria-live="polite"></section>
+
+      <main>
+        <section id="screen-home" class="screen active">
+          <div class="hero-card">
+            <p class="hero-kicker">Built in Tunisia for students and researchers everywhere</p>
+            <h2>Lab work and research, one workspace</h2>
+            <p>
+              Replace scattered paper notes, loose files, and disconnected reading tools with
+              one organized workspace for experiments, protocols, results, papers, and planning.
+            </p>
+          </div>
+
+          <div class="status-row">
+            <div class="status-pill" id="language-pill">English</div>
+            <div class="status-pill" id="sync-pill">Local save only</div>
+          </div>
+
+          <div class="menu-column">
+            <button class="menu-button" data-open-screen="workspace">
+              <span class="menu-title">Research Workspace</span>
+              <span class="menu-subtitle">Dashboard for notes, protocols, results, papers, and next actions</span>
+            </button>
+            <button class="menu-button" data-open-screen="cell">
+              <span class="menu-title" data-i18n="home_cellcounter">Cell Counter</span>
+              <span class="menu-subtitle">Malassez formula and experiment log</span>
+            </button>
+            <button class="menu-button" data-open-screen="timer">
+              <span class="menu-title" data-i18n="home_timer">Timer</span>
+              <span class="menu-subtitle">Incubation and centrifuge countdowns</span>
+            </button>
+            <button class="menu-button" data-open-screen="todo">
+              <span class="menu-title" data-i18n="home_todo">To-Do List</span>
+              <span class="menu-subtitle">Tasks, due dates, and priorities</span>
+            </button>
+            <button class="menu-button" data-open-screen="notes">
+              <span class="menu-title" data-i18n="home_labnotes">Lab Notes</span>
+              <span class="menu-subtitle">Daily experiment notes, observations, and results</span>
+            </button>
+            <button class="menu-button" data-open-screen="protocols">
+              <span class="menu-title" data-i18n="home_protocols">Protocols</span>
+              <span class="menu-subtitle">Reusable lab methods, materials, and steps</span>
+            </button>
+            <button class="menu-button" data-open-screen="voice">
+              <span class="menu-title" data-i18n="home_voice">Voice Notes</span>
+              <span class="menu-subtitle">Upload MP3 and replay later</span>
+            </button>
+            <button class="menu-button" data-open-screen="photo">
+              <span class="menu-title" data-i18n="home_photo">Photo to Data</span>
+              <span class="menu-subtitle">Cleaner OCR, spectro OD tables, and CSV export</span>
+            </button>
+            <button class="menu-button" data-open-screen="results">
+              <span class="menu-title">Results Vault</span>
+              <span class="menu-subtitle">GraphPad curves, Excel sheets, microscopy images, PDFs, and raw data</span>
+            </button>
+            <button class="menu-button" data-open-screen="failures">
+              <span class="menu-title" data-i18n="home_failures">Failures Log</span>
+              <span class="menu-subtitle">Mistakes, causes, and fixes</span>
+            </button>
+            <button class="menu-button" data-open-screen="converter">
+              <span class="menu-title" data-i18n="home_converter">Unit Converter</span>
+              <span class="menu-subtitle">Common wet-lab unit conversions</span>
+            </button>
+            <button class="menu-button" data-open-screen="articles">
+              <span class="menu-title" data-i18n="home_articles">Articles</span>
+              <span class="menu-subtitle">PubMed, Europe PMC, CORE, Open Access Button, and OpenAlex</span>
+            </button>
+            <button class="menu-button" data-open-screen="papers">
+              <span class="menu-title">Paper Summaries</span>
+              <span class="menu-subtitle">Trusted article notes with source text, quotes, methods, and conclusions</span>
+            </button>
+            <button class="menu-button" data-open-screen="calendar">
+              <span class="menu-title" data-i18n="home_calendar">Calendar</span>
+              <span class="menu-subtitle">Experiment dates and notes</span>
+            </button>
+            <button class="menu-button" data-open-screen="pomodoro">
+              <span class="menu-title" data-i18n="home_pomodoro">Pomodoro</span>
+              <span class="menu-subtitle">25/5 focus sessions</span>
+            </button>
+            <button class="menu-button" data-open-screen="language">
+              <span class="menu-title" data-i18n="language_button">Language</span>
+              <span class="menu-subtitle">Language, sync, backup, and profile</span>
+            </button>
+          </div>
+
+          <div class="support-card">
+            <div>
+              <h3>Today I Learned</h3>
+              <p>Keep one quick learning note every day, even if it is small.</p>
+            </div>
+            <button class="secondary-button" data-open-screen="learning" type="button">
+              Open Learning Log
+            </button>
+          </div>
+        </section>
+
+        <section id="screen-workspace" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2>Research Workspace</h2>
+          </div>
+
+          <div class="workspace-banner">
+            <div>
+              <p class="workspace-kicker">One place for experiments and literature</p>
+              <h3>Built for real scientific workflow</h3>
+              <p>
+                Use this dashboard to see what needs attention now, what knowledge you already
+                saved, and where your files and notes are living.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Workspace Overview</h3>
+                <span class="helper-text">Live counts from your saved records</span>
+              </div>
+              <div id="workspace-metrics" class="workspace-metrics"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Next Up</h3>
+                <span class="helper-text">What to do next in the workspace</span>
+              </div>
+              <div id="workspace-summary" class="list-stack"></div>
+            </article>
+
+            <article class="panel panel-span">
+              <div class="panel-heading">
+                <h3>Quick Actions</h3>
+                <span class="helper-text">Jump straight into the part of your workflow you need</span>
+              </div>
+              <div class="workspace-actions">
+                <button class="secondary-button" data-open-screen="notes" type="button">Open Lab Notes</button>
+                <button class="secondary-button" data-open-screen="protocols" type="button">Open Protocols</button>
+                <button class="secondary-button" data-open-screen="results" type="button">Open Results Vault</button>
+                <button class="secondary-button" data-open-screen="papers" type="button">Open Paper Summaries</button>
+                <button class="secondary-button" data-open-screen="articles" type="button">Open Articles</button>
+                <button class="secondary-button" data-open-screen="todo" type="button">Open Tasks</button>
+                <button class="secondary-button" data-open-screen="calendar" type="button">Open Calendar</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-cell" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">
+              Back
+            </button>
+            <h2 data-i18n="cell_title">Malassez Counter</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Current Count</h3>
+              <p class="formula-line">(Total Cells × Dilution × 10000) ÷ Number of squares</p>
+              <div class="counter-display" id="cell-total-display">0</div>
+              <div class="button-row">
+                <button class="primary-button" id="cell-add-1" type="button" data-i18n="cell_add1">+1</button>
+                <button class="primary-button" id="cell-add-5" type="button" data-i18n="cell_add5">+5</button>
+                <button class="primary-button" id="cell-add-10" type="button" data-i18n="cell_add10">+10</button>
+                <button class="danger-button" id="cell-clear" type="button" data-i18n="cell_clear">Clear</button>
+              </div>
+              <label class="field">
+                <span data-i18n="cell_squares">Number of squares</span>
+                <input id="cell-squares" type="number" min="1" value="10" />
+              </label>
+              <label class="field">
+                <span data-i18n="cell_dilution">Dilution</span>
+                <input id="cell-dilution" type="number" min="1" value="2" />
+              </label>
+              <div class="button-row">
+                <button class="secondary-button" id="cell-calculate" type="button" data-i18n="cell_calculate">
+                  Calculate
+                </button>
+                <button class="success-button" id="cell-save" type="button" data-i18n="cell_save">Save</button>
+                <button class="outline-button" id="cell-export" type="button" data-i18n="save_button">
+                  Save to Excel
+                </button>
+                <button class="outline-button" data-export-pdf="cellCounts" data-export-title="Cell Counts Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+              <div class="result-box">
+                <span class="result-label" data-i18n="cell_result">Result</span>
+                <strong id="cell-result-display">0</strong>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Saved Cell Counts</h3>
+                <span class="helper-text">Newest first</span>
+              </div>
+              <div id="cell-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-timer" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="home_timer">Timer</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Experiment Timer</h3>
+              <label class="field">
+                <span data-i18n="timer_name">Experiment Name</span>
+                <input id="timer-name" type="text" placeholder="Experiment incubation" />
+              </label>
+              <label class="field">
+                <span data-i18n="timer_activity_tag">Activity Tag</span>
+                <input id="timer-tag" type="text" placeholder="Incubation, wash, spin, microscope" />
+              </label>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span data-i18n="timer_minutes">Minutes</span>
+                  <input id="timer-minutes" type="number" min="0" value="15" />
+                </label>
+                <label class="field">
+                  <span data-i18n="timer_seconds">Seconds</span>
+                  <input id="timer-seconds" type="number" min="0" max="59" value="0" />
+                </label>
+              </div>
+              <div class="field">
+                <span data-i18n="timer_lab_presets">Lab Presets</span>
+                <div class="button-row">
+                  <button class="outline-button small-button" data-timer-preset="wash" type="button">Wash 03:00</button>
+                  <button class="outline-button small-button" data-timer-preset="incubation" type="button">Incubation 05:00</button>
+                  <button class="outline-button small-button" data-timer-preset="centrifuge" type="button">Centrifuge 10:00</button>
+                  <button class="outline-button small-button" data-timer-preset="staining" type="button">Staining 15:00</button>
+                  <button class="outline-button small-button" data-timer-preset="longrun" type="button">Long Run 30:00</button>
+                </div>
+              </div>
+              <div class="button-row">
+                <button class="primary-button" id="timer-add" type="button" data-i18n="timer_add">Add Timer</button>
+                <button class="outline-button" id="timer-draft-reset" type="button" data-i18n="timer_new">New Timer</button>
+              </div>
+              <p class="helper-text" data-i18n="timer_queue_hint">
+                Run several activities at the same time and save any one when needed.
+              </p>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Active Timers</h3>
+              </div>
+              <div id="timer-active-list" class="list-stack"></div>
+            </article>
+
+            <article class="panel panel-span">
+              <div class="panel-heading">
+                <h3>Timer Logs</h3>
+                <div class="button-row">
+                  <button class="outline-button small-button" id="timer-export" type="button" data-i18n="save_button">
+                    Save to Excel
+                  </button>
+                  <button class="outline-button small-button" data-export-pdf="timers" data-export-title="Timer Logs Report" type="button" data-i18n="save_pdf">
+                    Save to PDF
+                  </button>
+                </div>
+              </div>
+              <div id="timer-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-todo" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="home_todo">To-Do List</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Add Task</h3>
+              <label class="field">
+                <span data-i18n="todo_title">Task Title</span>
+                <input id="todo-title" type="text" />
+              </label>
+              <label class="field">
+                <span data-i18n="todo_date">Date</span>
+                <input id="todo-date" type="date" />
+              </label>
+              <label class="field">
+                <span data-i18n="todo_priority">Priority</span>
+                <select id="todo-priority">
+                  <option value="High" data-i18n="todo_high">High</option>
+                  <option value="Medium" data-i18n="todo_medium">Medium</option>
+                  <option value="Low" data-i18n="todo_low">Low</option>
+                </select>
+              </label>
+              <button class="success-button full-width" id="todo-add" type="button" data-i18n="todo_add">
+                Add Task
+              </button>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Task List</h3>
+                <div class="button-row">
+                  <button class="outline-button small-button" id="todo-export" type="button" data-i18n="save_button">
+                    Save to Excel
+                  </button>
+                  <button class="outline-button small-button" data-export-pdf="tasks" data-export-title="Task List Report" type="button" data-i18n="save_pdf">
+                    Save to PDF
+                  </button>
+                </div>
+              </div>
+              <div id="todo-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-voice" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="home_voice">Voice Notes</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Upload Voice Note</h3>
+              <p class="helper-text" data-i18n="voice_instruction">
+                Use your phone's voice recorder then upload the file
+              </p>
+              <p class="helper-text">
+                Honest note: no free offline browser tool can promise 100% perfect audio-to-text in
+                Darija, Arabic, French, and English. The safest research workflow is:
+                upload audio, paste or correct the transcript, verify it against the recording, then
+                save a structured summary.
+              </p>
+              <label class="field">
+                <span data-i18n="voice_experiment">Experiment Name</span>
+                <input id="voice-experiment" type="text" />
+              </label>
+              <label class="field">
+                <span data-i18n="voice_notes">Additional Notes</span>
+                <textarea id="voice-notes" rows="4"></textarea>
+              </label>
+              <label class="field">
+                <span data-i18n="voice_upload">Choose Audio File</span>
+                <input id="voice-file" type="file" accept=".mp3,audio/mpeg,audio/mp3,audio/*" />
+              </label>
+              <label class="field">
+                <span>Transcript Language</span>
+                <select id="voice-transcript-language">
+                  <option value="Mixed">Mixed / Multilingual</option>
+                  <option value="English">English</option>
+                  <option value="French">French</option>
+                  <option value="Arabic">Arabic</option>
+                  <option value="Tunisian Darija">Tunisian Darija</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Verified Transcript</span>
+                <textarea id="voice-transcript" rows="6" placeholder="Paste or type the corrected transcript here"></textarea>
+              </label>
+              <label class="field">
+                <span>Structured Summary</span>
+                <textarea id="voice-summary" rows="6" placeholder="Objective, method, key results, problems, next actions"></textarea>
+              </label>
+              <label class="field">
+                <span>Exact Values / Terms to Double-Check</span>
+                <textarea id="voice-evidence" rows="3" placeholder="Concentrations, timings, names, IDs, quotes from the transcript"></textarea>
+              </label>
+              <label class="checkbox-field">
+                <input id="voice-verified" type="checkbox" />
+                <span>I checked the transcript against the audio before saving it.</span>
+              </label>
+              <div class="button-row">
+                <button class="secondary-button" id="voice-template" type="button">Load Summary Template</button>
+                <button class="success-button" id="voice-save" type="button" data-i18n="cell_save">Save</button>
+                <button class="outline-button" id="voice-export" type="button" data-i18n="save_button">
+                  Save to Excel
+                </button>
+                <button class="outline-button" data-export-pdf="voiceNotes" data-export-title="Voice Notes Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Saved Recordings</h3>
+              <div id="voice-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-notes" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="labnotes_title">Lab Notes</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>New Lab Note</h3>
+              <label class="field">
+                <span data-i18n="note_title">Note Title</span>
+                <input id="note-title" type="text" placeholder="Cell culture passage notes" />
+              </label>
+              <label class="field">
+                <span data-i18n="note_date">Date</span>
+                <input id="note-date" type="date" />
+              </label>
+              <label class="field">
+                <span data-i18n="note_experiment">Experiment Name</span>
+                <input id="note-experiment" type="text" placeholder="Immunostaining run 3" />
+              </label>
+              <label class="field">
+                <span data-i18n="note_protocol">Linked Protocol</span>
+                <select id="note-protocol">
+                  <option value="">No protocol selected</option>
+                </select>
+                <small class="helper-text" id="note-protocol-hint" data-i18n="protocol_choice_hint">
+                  Choose one of your saved protocols or a starter template.
+                </small>
+              </label>
+              <label class="field">
+                <span data-i18n="note_tags">Tags</span>
+                <input id="note-tags" type="text" placeholder="cells, staining, microscope" />
+              </label>
+              <label class="field">
+                <span data-i18n="note_observations">Observations</span>
+                <textarea id="note-observations" rows="4"></textarea>
+              </label>
+              <label class="field">
+                <span data-i18n="note_results">Results</span>
+                <textarea id="note-results" rows="4"></textarea>
+              </label>
+              <label class="field">
+                <span data-i18n="note_nextsteps">Next Steps</span>
+                <textarea id="note-nextsteps" rows="3"></textarea>
+              </label>
+              <div class="button-row">
+                <button class="success-button" id="note-save" type="button" data-i18n="notes_save">Save Note</button>
+                <button class="outline-button" id="note-export" type="button" data-i18n="save_button">Save to Excel</button>
+                <button class="outline-button" data-export-pdf="labNotes" data-export-title="Lab Notes Report" type="button" data-i18n="save_pdf">Save to PDF</button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Saved Lab Notes</h3>
+              <div id="note-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-protocols" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="protocols_title">Protocols</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>New Protocol</h3>
+              <label class="field">
+                <span data-i18n="protocol_title">Protocol Title</span>
+                <input id="protocol-title" type="text" placeholder="Cell thawing protocol" />
+              </label>
+              <label class="field">
+                <span data-i18n="protocol_category">Category</span>
+                <select id="protocol-category">
+                  <option value="Cell Culture">Cell Culture</option>
+                  <option value="Staining">Staining</option>
+                  <option value="Molecular Biology">Molecular Biology</option>
+                  <option value="Microscopy">Microscopy</option>
+                  <option value="Analysis">Analysis</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+              <label class="field">
+                <span data-i18n="protocol_objective">Objective</span>
+                <textarea id="protocol-objective" rows="3"></textarea>
+              </label>
+              <label class="field">
+                <span data-i18n="protocol_materials">Materials</span>
+                <textarea id="protocol-materials" rows="4"></textarea>
+              </label>
+              <label class="field">
+                <span data-i18n="protocol_steps">Steps</span>
+                <textarea id="protocol-steps" rows="6"></textarea>
+              </label>
+              <label class="field">
+                <span data-i18n="protocol_duration">Expected Duration</span>
+                <input id="protocol-duration" type="text" placeholder="45 min" />
+              </label>
+              <label class="field">
+                <span data-i18n="protocol_safety">Safety Notes</span>
+                <textarea id="protocol-safety" rows="3"></textarea>
+              </label>
+              <div class="button-row">
+                <button class="success-button" id="protocol-save" type="button" data-i18n="protocol_save">Save Protocol</button>
+                <button class="outline-button" id="protocol-export" type="button" data-i18n="save_button">Save to Excel</button>
+                <button class="outline-button" data-export-pdf="protocols" data-export-title="Protocols Report" type="button" data-i18n="save_pdf">Save to PDF</button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Saved Protocols</h3>
+              <div id="protocol-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-photo" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="home_photo">Photo to Data</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Image OCR</h3>
+              <p class="helper-text">
+                Upload a photo of notes, printed tables, spectro readouts, or labels. The app now
+                enhances the image before OCR, then lets you correct the result before export.
+                For best precision, crop tightly around the table and use a bright, straight photo.
+              </p>
+              <label class="field">
+                <span>Image File</span>
+                <input id="photo-file" type="file" accept="image/*" />
+              </label>
+              <div class="button-row">
+                <button class="primary-button" id="photo-extract" type="button">Extract Cleaner Text</button>
+                <button class="secondary-button" id="photo-extract-od" type="button">Build OD Table</button>
+                <button class="outline-button" id="photo-open-groupdocs" type="button">Open GroupDocs</button>
+                <button class="outline-button" id="photo-export" type="button">Export CSV</button>
+              </div>
+              <label class="field">
+                <span>Extracted Text</span>
+                <textarea id="photo-output" rows="12"></textarea>
+              </label>
+            </article>
+
+            <article class="panel">
+              <h3>Preview</h3>
+              <img id="photo-preview" class="preview-image hidden" alt="Selected image preview" />
+              <img id="photo-enhanced-preview" class="preview-image hidden" alt="Enhanced image preview" />
+              <div id="photo-status" class="helper-text">No image selected yet.</div>
+            </article>
+
+            <article class="panel panel-span">
+              <div class="panel-heading">
+                <div>
+                  <h3>Spectro OD Table Builder</h3>
+                  <p class="helper-text">
+                    This is designed for photos of spectro optical density tables or readouts. If you
+                    upload a graph instead of a table, use the extracted rows as a starting draft and
+                    correct them before export.
+                  </p>
+                </div>
+                <div class="button-row">
+                  <button class="outline-button small-button" id="spectro-add-row" type="button">Add Row</button>
+                  <button class="outline-button small-button" id="spectro-normalize" type="button">Normalize Decimals</button>
+                </div>
+              </div>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Table Title</span>
+                  <input id="spectro-title" type="text" placeholder="Crystal Violet 24H OD table" />
+                </label>
+                <label class="field">
+                  <span>Project / Folder</span>
+                  <input id="spectro-project" type="text" placeholder="Glioblastoma / Crystal Violet / April" />
+                </label>
+              </div>
+              <div class="field">
+                <span>Table Notes</span>
+                <textarea id="spectro-notes" rows="3" placeholder="Plate name, wavelength, instrument, replicate notes"></textarea>
+              </div>
+              <div class="spectro-table-wrap">
+                <div class="spectro-table spectro-table-head">
+                  <span>Sample / Condition</span>
+                  <span>OD 1</span>
+                  <span>OD 2</span>
+                  <span>OD 3</span>
+                  <span>Comment</span>
+                  <span>Action</span>
+                </div>
+                <div id="spectro-rows" class="spectro-rows"></div>
+              </div>
+              <div class="button-row">
+                <button class="success-button" id="spectro-save" type="button">Save OD Table</button>
+                <button class="outline-button" id="spectro-export" type="button">Export OD CSV</button>
+                <button class="outline-button" data-export-pdf="spectroTables" data-export-title="Spectro OD Tables Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel panel-span">
+              <h3>Saved OD Tables</h3>
+              <div id="spectro-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-results" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2>Results Vault</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Store a Result File</h3>
+              <p class="helper-text">
+                Keep GraphPad curves, Excel sheets, microscopy pictures, raw exports, and PDFs in one
+                place with project names, tags, and notes.
+              </p>
+              <label class="field">
+                <span>Project / Folder</span>
+                <input id="result-project" type="text" placeholder="Project, paper, assay, or experiment group" />
+              </label>
+              <label class="field">
+                <span>Result Title</span>
+                <input id="result-title" type="text" placeholder="Dose-response curve / Plate 2 / Microscopy set A" />
+              </label>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Result Type</span>
+                  <select id="result-type">
+                    <option value="GraphPad Curve">GraphPad Curve</option>
+                    <option value="Excel Sheet">Excel Sheet</option>
+                    <option value="Microscopy Image">Microscopy Image</option>
+                    <option value="Spectro Table">Spectro Table</option>
+                    <option value="Raw Data">Raw Data</option>
+                    <option value="PDF Report">PDF Report</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Order / Sample ID</span>
+                  <input id="result-order" type="text" placeholder="Replicate 1, Plate B3, Sample 22" />
+                </label>
+              </div>
+              <label class="field">
+                <span>Tags</span>
+                <input id="result-tags" type="text" placeholder="glioblastoma, OD, crystal violet, microscopy" />
+              </label>
+              <label class="field">
+                <span>Notes</span>
+                <textarea id="result-notes" rows="3" placeholder="Anything that helps you find or interpret the file later"></textarea>
+              </label>
+              <label class="field">
+                <span>Attach File</span>
+                <input id="result-file" type="file" accept=".xlsx,.xls,.csv,.tsv,.pdf,.pzfx,.txt,.json,image/*" />
+              </label>
+              <div class="button-row">
+                <button class="success-button" id="result-save" type="button">Save Result</button>
+                <button class="outline-button" id="result-export" type="button">Export Metadata CSV</button>
+                <button class="outline-button" data-export-pdf="resultFiles" data-export-title="Results Vault Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Find Stored Results</h3>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Filter by Type</span>
+                  <select id="result-filter-type">
+                    <option value="">All types</option>
+                    <option value="GraphPad Curve">GraphPad Curve</option>
+                    <option value="Excel Sheet">Excel Sheet</option>
+                    <option value="Microscopy Image">Microscopy Image</option>
+                    <option value="Spectro Table">Spectro Table</option>
+                    <option value="Raw Data">Raw Data</option>
+                    <option value="PDF Report">PDF Report</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Project Filter</span>
+                  <input id="result-filter-project" type="text" placeholder="Type a project or folder name" />
+                </label>
+              </div>
+              <div id="results-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-failures" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="home_failures">Failures Log</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Log a Failure</h3>
+              <label class="field">
+                <span data-i18n="failure_what">What went wrong?</span>
+                <textarea id="failure-what" rows="3"></textarea>
+              </label>
+              <label class="field">
+                <span data-i18n="failure_why">Why did it happen?</span>
+                <textarea id="failure-why" rows="3"></textarea>
+              </label>
+              <label class="field">
+                <span data-i18n="failure_solution">Proposed solution?</span>
+                <textarea id="failure-solution" rows="3"></textarea>
+              </label>
+              <div class="button-row">
+                <button class="success-button" id="failure-save" type="button" data-i18n="cell_save">Save</button>
+                <button class="secondary-button" data-open-screen="learning" type="button">Today I Learned</button>
+                <button class="outline-button" id="failure-export" type="button" data-i18n="save_button">
+                  Save to Excel
+                </button>
+                <button class="outline-button" data-export-pdf="failures" data-export-title="Failures Log Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Past Failures</h3>
+              <div id="failure-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-learning" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2>Today I Learned</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Daily Learning Entry</h3>
+              <label class="field">
+                <span data-i18n="learn_label">What did you learn today?</span>
+                <textarea id="learning-text" rows="4"></textarea>
+              </label>
+              <label class="field">
+                <span data-i18n="learn_category">Category</span>
+                <select id="learning-category">
+                  <option value="Experiment">Experiment</option>
+                  <option value="Paper">Paper</option>
+                  <option value="Idea">Idea</option>
+                  <option value="Mistake">Mistake</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+              <div class="button-row">
+                <button class="success-button" id="learning-save" type="button" data-i18n="learn_save">Save</button>
+                <button class="outline-button" id="learning-export" type="button" data-i18n="save_button">
+                  Save to Excel
+                </button>
+                <button class="outline-button" data-export-pdf="learnings" data-export-title="Learning Log Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Learning Log</h3>
+              <div id="learning-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-converter" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="home_converter">Unit Converter</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Convert Units</h3>
+              <label class="field">
+                <span data-i18n="converter_type">Conversion Type</span>
+                <select id="converter-type">
+                  <option value="ml_to_l">mL to L</option>
+                  <option value="l_to_ml">L to mL</option>
+                  <option value="mm_to_m">mM to M</option>
+                  <option value="m_to_mm">M to mM</option>
+                  <option value="ug_to_mg">μg to mg</option>
+                  <option value="mg_to_ug">mg to μg</option>
+                  <option value="c_to_f">°C to °F</option>
+                  <option value="f_to_c">°F to °C</option>
+                </select>
+              </label>
+              <label class="field">
+                <span data-i18n="converter_value">Value</span>
+                <input id="converter-value" type="number" step="any" />
+              </label>
+              <div class="button-row">
+                <button class="primary-button" id="converter-run" type="button" data-i18n="converter_button">
+                  Convert
+                </button>
+              </div>
+              <div class="result-box">
+                <span class="result-label" data-i18n="cell_result">Result</span>
+                <strong id="converter-result">0</strong>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Reference</h3>
+              <ul class="plain-list">
+                <li>mL to L = divide by 1000</li>
+                <li>L to mL = multiply by 1000</li>
+                <li>mM to M = divide by 1000</li>
+                <li>M to mM = multiply by 1000</li>
+                <li>μg to mg = divide by 1000</li>
+                <li>mg to μg = multiply by 1000</li>
+                <li>°C to °F = (°C × 9/5) + 32</li>
+                <li>°F to °C = (°F - 32) × 5/9</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-articles" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="home_articles">Articles</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Search Platforms</h3>
+              <div class="resource-grid">
+                <a class="resource-link" href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noreferrer">PubMed</a>
+                <a class="resource-link" href="https://europepmc.org" target="_blank" rel="noreferrer">Europe PMC</a>
+                <a class="resource-link" href="https://www.ncbi.nlm.nih.gov/pmc" target="_blank" rel="noreferrer">PMC</a>
+                <a class="resource-link" href="https://core.ac.uk" target="_blank" rel="noreferrer">CORE</a>
+                <a class="resource-link" href="https://openaccessbutton.org" target="_blank" rel="noreferrer">Open Access Button</a>
+                <a class="resource-link" href="https://openalex.org" target="_blank" rel="noreferrer">OpenAlex</a>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Save an Article</h3>
+              <label class="field">
+                <span>Article Title</span>
+                <input id="article-title" type="text" />
+              </label>
+              <label class="field">
+                <span>Article URL</span>
+                <input id="article-url" type="url" placeholder="https://..." />
+              </label>
+              <label class="field">
+                <span>Summary</span>
+                <textarea id="article-summary" rows="4"></textarea>
+              </label>
+              <div class="button-row">
+                <button class="success-button" id="article-save" type="button">Save Article</button>
+                <button class="outline-button" id="article-export" type="button" data-i18n="save_button">
+                  Save to Excel
+                </button>
+                <button class="outline-button" data-export-pdf="articles" data-export-title="Articles Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel panel-span">
+              <h3>Saved Articles</h3>
+              <div id="article-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-papers" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2>Paper Summaries</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Trusted Paper Summary</h3>
+              <p class="helper-text">
+                This section is designed for authentic scientific summaries. Base the summary on the
+                PDF, abstract, or copied paper text. Store exact supporting quotes so your summary is
+                traceable and credible.
+              </p>
+              <p class="helper-text">
+                Important: in this offline app, the attached PDF is stored for your records, but the
+                draft summary is generated from the abstract or paper text below. If the PDF contains
+                selectable text, the app will now try to extract it automatically.
+              </p>
+              <label class="field">
+                <span>Paper Title</span>
+                <input id="paper-title" type="text" />
+              </label>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Authors / Year</span>
+                  <input id="paper-authors" type="text" placeholder="First author et al., 2026" />
+                </label>
+                <label class="field">
+                  <span>DOI or URL</span>
+                  <input id="paper-url" type="url" placeholder="https://..." />
+                </label>
+              </div>
+              <label class="field">
+                <span>Attach PDF</span>
+                <input id="paper-file" type="file" accept=".pdf" />
+              </label>
+              <label class="field">
+                <span>Source Text Used for Summary</span>
+                <textarea id="paper-source-text" rows="6" placeholder="Paste the abstract, conclusion, or the passage you used"></textarea>
+              </label>
+              <label class="field">
+                <span>Research Question</span>
+                <textarea id="paper-question" rows="2"></textarea>
+              </label>
+              <label class="field">
+                <span>Model / Sample / Population</span>
+                <textarea id="paper-model" rows="2"></textarea>
+              </label>
+              <label class="field">
+                <span>Methods</span>
+                <textarea id="paper-methods" rows="3"></textarea>
+              </label>
+              <label class="field">
+                <span>Key Findings</span>
+                <textarea id="paper-findings" rows="4"></textarea>
+              </label>
+              <label class="field">
+                <span>Limitations / Warnings</span>
+                <textarea id="paper-limitations" rows="3"></textarea>
+              </label>
+              <label class="field">
+                <span>Why It Matters</span>
+                <textarea id="paper-importance" rows="3"></textarea>
+              </label>
+              <label class="field">
+                <span>Exact Supporting Quotes</span>
+                <textarea id="paper-quotes" rows="4" placeholder="Paste exact lines or values from the paper"></textarea>
+              </label>
+              <label class="checkbox-field">
+                <input id="paper-verified" type="checkbox" />
+                <span>I verified this summary against the paper text or abstract.</span>
+              </label>
+              <div class="button-row">
+                <button class="secondary-button" id="paper-template" type="button">Draft Summary</button>
+                <button class="success-button" id="paper-save" type="button">Save Summary</button>
+                <button class="outline-button" id="paper-export" type="button">Save to Excel</button>
+                <button class="outline-button" data-export-pdf="paperSummaries" data-export-title="PDF Summaries Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+                <h3>Saved Paper Summaries</h3>
+              <div id="paper-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-calendar" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="calendar_title">Calendar</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="calendar-toolbar">
+                <button class="outline-button small-button" id="calendar-prev" type="button">Prev</button>
+                <h3 id="calendar-month-label">Month</h3>
+                <button class="outline-button small-button" id="calendar-next" type="button">Next</button>
+              </div>
+              <div class="calendar-grid calendar-weekdays">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span>Sun</span>
+              </div>
+              <div id="calendar-grid" class="calendar-grid"></div>
+            </article>
+
+            <article class="panel">
+              <h3 data-i18n="calendar_add">Add Event</h3>
+              <label class="field">
+                <span data-i18n="calendar_event">Event Title</span>
+                <input id="calendar-title" type="text" />
+              </label>
+              <label class="field">
+                <span data-i18n="todo_date">Date</span>
+                <input id="calendar-date" type="date" />
+              </label>
+              <label class="field">
+                <span>Time</span>
+                <input id="calendar-time" type="time" />
+              </label>
+              <label class="field">
+                <span data-i18n="calendar_notes">Notes</span>
+                <textarea id="calendar-notes" rows="3"></textarea>
+              </label>
+              <div class="button-row">
+                <button class="success-button" id="calendar-save" type="button" data-i18n="calendar_add">
+                  Add Event
+                </button>
+                <button class="outline-button" id="calendar-export" type="button" data-i18n="save_button">
+                  Save to Excel
+                </button>
+                <button class="outline-button" data-export-pdf="calendar" data-export-title="Calendar Events Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel panel-span">
+              <div class="panel-heading">
+                <h3>Events on <span id="calendar-selected-date-label">selected date</span></h3>
+              </div>
+              <div id="calendar-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-pomodoro" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="pomodoro_timer">Pomodoro Timer</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Focus Session</h3>
+              <div class="mode-pills">
+                <span class="status-pill" id="pomodoro-mode-pill">Work</span>
+                <span class="status-pill" id="pomodoro-sessions-pill">0 Sessions</span>
+              </div>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span data-i18n="pomodoro_work_minutes">Work Minutes</span>
+                  <input id="pomodoro-work-minutes" type="number" min="1" value="25" />
+                </label>
+                <label class="field">
+                  <span data-i18n="pomodoro_break_minutes">Break Minutes</span>
+                  <input id="pomodoro-break-minutes" type="number" min="1" value="5" />
+                </label>
+              </div>
+              <div class="field">
+                <span data-i18n="pomodoro_quick_presets">Quick Presets</span>
+                <div class="button-row">
+                  <button class="outline-button small-button" data-pomodoro-preset="classic" type="button">25 / 5</button>
+                  <button class="outline-button small-button" data-pomodoro-preset="deep" type="button">50 / 10</button>
+                  <button class="outline-button small-button" data-pomodoro-preset="extended" type="button">90 / 15</button>
+                </div>
+              </div>
+              <div class="timer-display" id="pomodoro-display">25:00</div>
+              <div class="button-row">
+                <button class="primary-button" id="pomodoro-start" type="button" data-i18n="pomodoro_start">Start</button>
+                <button class="secondary-button" id="pomodoro-pause" type="button" data-i18n="pomodoro_pause">Pause</button>
+                <button class="danger-button" id="pomodoro-reset" type="button" data-i18n="pomodoro_reset">Reset</button>
+                <button class="outline-button" id="pomodoro-apply" type="button" data-i18n="pomodoro_set_times">Set Times</button>
+              </div>
+              <div class="button-row">
+                <button class="success-button" id="pomodoro-save" type="button" data-i18n="pomodoro_save">Save Sessions</button>
+                <button class="outline-button" id="pomodoro-export" type="button" data-i18n="save_button">
+                  Save to Excel
+                </button>
+                <button class="outline-button" data-export-pdf="pomodoro" data-export-title="Pomodoro Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+              <p class="helper-text" data-i18n="pomodoro_custom_hint">
+                Choose your own work and break lengths. Reset uses your current custom times.
+              </p>
+            </article>
+
+            <article class="panel">
+              <h3>Saved Pomodoro Logs</h3>
+              <div id="pomodoro-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-language" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="language_button">Language</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Choose Language</h3>
+              <div class="button-column">
+                <button class="outline-button full-width language-choice" data-language="ta" type="button">تونسي</button>
+                <button class="outline-button full-width language-choice" data-language="ar" type="button">عربي</button>
+                <button class="outline-button full-width language-choice" data-language="en" type="button">English</button>
+                <button class="outline-button full-width language-choice" data-language="fr" type="button">Français</button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Researcher Profile</h3>
+              <label class="field">
+                <span>Name</span>
+                <input id="settings-name" type="text" placeholder="Your name" />
+              </label>
+              <label class="field">
+                <span>Email</span>
+                <input id="settings-email" type="email" placeholder="your@email.com" />
+              </label>
+              <button class="success-button full-width" id="settings-save-profile" type="button">Save Profile</button>
+            </article>
+
+            <article class="panel panel-span">
+              <h3>Optional Google Sheets Sync Through Make</h3>
+              <p class="helper-text">
+                Paste a Make webhook URL for each collection you want to sync. If a webhook
+                is blank, the app still saves locally on your phone.
+              </p>
+              <div class="webhook-grid">
+                <label class="field">
+                  <span>LabNotes webhook</span>
+                  <input id="webhook-labNotes" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Protocols webhook</span>
+                  <input id="webhook-protocols" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>CellCounts webhook</span>
+                  <input id="webhook-cellCounts" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Experiments webhook</span>
+                  <input id="webhook-experiments" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Tasks webhook</span>
+                  <input id="webhook-tasks" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Failures webhook</span>
+                  <input id="webhook-failures" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Learnings webhook</span>
+                  <input id="webhook-learnings" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Articles webhook</span>
+                  <input id="webhook-articles" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>VoiceNotes webhook</span>
+                  <input id="webhook-voiceNotes" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>SpectroTables webhook</span>
+                  <input id="webhook-spectroTables" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>ResultsVault webhook</span>
+                  <input id="webhook-resultFiles" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>PdfSummaries webhook</span>
+                  <input id="webhook-paperSummaries" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Pomodoro webhook</span>
+                  <input id="webhook-pomodoro" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Calendar webhook</span>
+                  <input id="webhook-calendar" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Timers webhook</span>
+                  <input id="webhook-timers" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+              </div>
+              <div class="button-row">
+                <button class="success-button" id="settings-save-webhooks" type="button">Save Sync Settings</button>
+                <button class="outline-button" id="settings-export-backup" type="button">Export Full Backup</button>
+              </div>
+            </article>
+
+            <article class="panel panel-span">
+              <h3 data-i18n="legal_title">Ownership and Legal</h3>
+              <p class="helper-text" data-i18n="founder_credit">
+                Lab Asis was created by Tasnim Gassem. Copyright notice and legal pages are included for publishing.
+              </p>
+              <div class="resource-grid">
+                <a class="resource-link" href="privacy.html" target="_blank" rel="noreferrer" data-i18n="legal_privacy">Privacy Policy</a>
+                <a class="resource-link" href="terms.html" target="_blank" rel="noreferrer" data-i18n="legal_terms">Terms of Use</a>
+                <a class="resource-link" href="copyright.html" target="_blank" rel="noreferrer" data-i18n="legal_copyright">Copyright Notice</a>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <p>© 2026 Lab Asis. Created by Tasnim Gassem. All rights reserved.</p>
+        <p>Made in Tunisia for scientists worldwide.</p>
+      </footer>
+    </div>
+
+    <div id="timer-alert-modal" class="timer-alert-modal hidden" aria-live="assertive" aria-modal="true" role="alertdialog">
+      <div id="timer-alert-card" class="timer-alert-card"></div>
+    </div>
+
+    <div id="pomodoro-alert-modal" class="timer-alert-modal hidden" aria-live="assertive" aria-modal="true" role="alertdialog">
+      <div id="pomodoro-alert-card" class="timer-alert-card"></div>
+    </div>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

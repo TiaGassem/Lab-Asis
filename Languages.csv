@@ -1,0 +1,88 @@
+ButtonName,TunisianArabic,Arabic,English,French
+app_name,لاب أسيس,لاب أسيس,Lab Asis,Lab Asis
+home_cellcounter,عداد الخلايا,عداد الخلايا,Cell Counter,Compteur de cellules
+home_timer,المؤقت,المؤقت,Timer,Minuteur
+home_todo,قائمة المهام,قائمة المهام,To-Do List,Liste de tâches
+home_labnotes,ملاحظات المختبر,ملاحظات المختبر,Lab Notes,Notes de labo
+home_protocols,البروتوكولات,البروتوكولات,Protocols,Protocoles
+home_voice,تسجيل صوتي,تسجيل صوتي,Voice Notes,Notes vocales
+home_photo,صورة إلى بيانات,صورة إلى بيانات,Photo to Data,Photo vers données
+home_failures,سجل الأخطاء,سجل الأخطاء,Failures Log,Journal des échecs
+home_converter,محول الوحدات,محول الوحدات,Unit Converter,Convertisseur
+home_articles,مقالات علمية,مقالات علمية,Articles,Articles
+home_calendar,التقويم,التقويم,Calendar,Calendrier
+home_pomodoro,بومودورو,بومودورو,Pomodoro,Pomodoro
+language_button,اللغة,اللغة,Language,Langue
+cell_title,عداد خلايا مالاسيز,عداد خلايا مالاسيز,Malassez Counter,Compteur Malassez
+cell_add1,+1,+1,+1,+1
+cell_add5,+5,+5,+5,+5
+cell_add10,+10,+10,+10,+10
+cell_clear,مسح,مسح,Clear,Effacer
+cell_calculate,احسب,احسب,Calculate,Calculer
+cell_save,حفظ,حفظ,Save,Enregistrer
+cell_result,النتيجة,النتيجة,Result,Résultat
+cell_squares,عدد المربعات,عدد المربعات,Number of squares,Nombre de carrés
+cell_dilution,التخفيف,التخفيف,Dilution,Dilution
+timer_name,اسم التجربة,اسم التجربة,Experiment Name,Nom de l'expérience
+timer_start,بدء,بدء,Start,Démarrer
+timer_stop,إيقاف,إيقاف,Stop,Arrêter
+timer_save,حفظ الوقت,حفظ الوقت,Save Time,Enregistrer
+converter_type,نوع التحويل,نوع التحويل,Conversion Type,Type de conversion
+converter_value,القيمة,القيمة,Value,Valeur
+converter_button,تحويل,تحويل,Convert,Convertir
+failure_what,شنوة الخطأ؟,ما الخطأ؟,What went wrong?,Qu'est-ce qui n'a pas fonctionné ?
+failure_why,علاش حدث؟,لماذا حدث؟,Why did it happen?,Pourquoi est-ce arrivé ?
+failure_solution,الحل المقترح؟,الحل المقترح؟,Proposed solution?,Solution proposée ?
+learn_label,شنوة تعلمت اليوم؟,ماذا تعلمت اليوم؟,What did you learn today?,Qu'as-tu appris aujourd'hui ?
+learn_category,التصنيف,التصنيف,Category,Catégorie
+learn_save,حفظ,حفظ,Save,Enregistrer
+todo_title,عنوان المهمة,عنوان المهمة,Task Title,Titre de la tâche
+todo_date,التاريخ,التاريخ,Date,Date
+todo_priority,الأهمية,الأهمية,Priority,Priorité
+todo_high,عالي,عالي,High,Haute
+todo_medium,متوسط,متوسط,Medium,Moyenne
+todo_low,منخفض,منخفض,Low,Basse
+todo_status,الحالة,الحالة,Status,Statut
+todo_pending,قيد الانتظار,قيد الانتظار,Pending,En attente
+todo_done,منجز,منجز,Done,Terminé
+todo_add,إضافة مهمة,إضافة مهمة,Add Task,Ajouter une tâche
+pomodoro_timer,مؤقت بومودورو,مؤقت بومودورو,Pomodoro Timer,Minuteur Pomodoro
+pomodoro_work,وقت العمل,وقت العمل,Work Time,Temps de travail
+pomodoro_break,وقت الراحة,وقت الراحة,Break Time,Temps de pause
+pomodoro_start,بدء,بدء,Start,Démarrer
+pomodoro_pause,إيقاف مؤقت,إيقاف مؤقت,Pause,Pause
+pomodoro_reset,إعادة ضبط,إعادة ضبط,Reset,Réinitialiser
+pomodoro_sessions,الجلسات,الجلسات,Sessions,Sessions
+calendar_title,التقويم,التقويم,Calendar,Calendrier
+calendar_add,إضافة حدث,إضافة حدث,Add Event,Ajouter un événement
+calendar_event,عنوان الحدث,عنوان الحدث,Event Title,Titre de l'événement
+calendar_notes,ملاحظات,ملاحظات,Notes,Notes
+back_button,رجوع,رجوع,Back,Retour
+save_button,حفظ في إكسل,حفظ في إكسل,Save to Excel,Enregistrer
+save_pdf,حفظ PDF,حفظ PDF,Save to PDF,Enregistrer en PDF
+voice_instruction,استخدم مسجل الصوت في هاتفك ثم ارفع الملف,استخدم مسجل الصوت في هاتفك ثم ارفع الملف,Use your phone's voice recorder then upload the file,Utilisez l'enregistreur vocal de votre téléphone puis téléchargez le fichier
+voice_upload,اختر ملف صوتي,اختر ملف صوتي,Choose Audio File,Choisir un fichier audio
+voice_experiment,اسم التجربة,اسم التجربة,Experiment Name,Nom de l'expérience
+voice_notes,ملاحظات إضافية,ملاحظات إضافية,Additional Notes,Notes supplémentaires
+labnotes_title,ملاحظات المختبر,ملاحظات المختبر,Lab Notes,Notes de labo
+notes_save,حفظ الملاحظة,حفظ الملاحظة,Save Note,Enregistrer la note
+note_title,عنوان الملاحظة,عنوان الملاحظة,Note Title,Titre de la note
+note_date,تاريخ الملاحظة,تاريخ الملاحظة,Date,Date
+note_experiment,اسم التجربة,اسم التجربة,Experiment Name,Nom de l'expérience
+note_protocol,البروتوكول المرتبط,البروتوكول المرتبط,Linked Protocol,Protocole lié
+protocol_choice_hint,اختر بروتوكول محفوظ أو نموذج جاهز.,اختر بروتوكولًا محفوظًا أو نموذجًا جاهزًا.,Choose one of your saved protocols or a starter template.,Choisissez un protocole enregistré ou un modèle de départ.
+note_tags,الوسوم,الوسوم,Tags,Tags
+note_observations,الملاحظات,الملاحظات,Observations,Observations
+note_results,النتائج,النتائج,Results,Résultats
+note_nextsteps,الخطوات القادمة,الخطوات القادمة,Next Steps,Prochaines étapes
+protocols_title,البروتوكولات,البروتوكولات,Protocols,Protocoles
+protocol_save,حفظ البروتوكول,حفظ البروتوكول,Save Protocol,Enregistrer le protocole
+protocol_title,عنوان البروتوكول,عنوان البروتوكول,Protocol Title,Titre du protocole
+protocol_category,التصنيف,التصنيف,Category,Catégorie
+protocol_objective,الهدف,الهدف,Objective,Objectif
+protocol_materials,المواد,المواد,Materials,Matériel
+protocol_steps,الخطوات,الخطوات,Steps,Étapes
+protocol_duration,المدة المتوقعة,المدة المتوقعة,Expected Duration,Durée prévue
+protocol_safety,ملاحظات السلامة,ملاحظات السلامة,Safety Notes,Notes de sécurité
+your_protocols,بروتوكولاتي,بروتوكولاتي,Your Protocols,Vos protocoles
+starter_protocols,نماذج جاهزة,نماذج جاهزة,Starter Templates,Modèles de départ

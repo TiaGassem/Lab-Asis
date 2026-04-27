@@ -1,4 +1,4 @@
-const CACHE_NAME = "lab-asis-cache-v17";
+const CACHE_NAME = "lab-asis-cache-v20";
 const ASSETS = [
   "./",
   "./index.html",

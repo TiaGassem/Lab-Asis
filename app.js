@@ -5,6 +5,10 @@ const LANG = {
   fr: "Français",
 };
 
+LANG.ta = "تونسي";
+LANG.ar = "العربية";
+LANG.fr = "Français";
+
 const RTL_LANGS = new Set(["ta", "ar"]);
 
 const STARTER_PROTOCOLS = [
@@ -55,6 +59,127 @@ const STARTER_PROTOCOLS = [
 ];
 
 const TRANSLATIONS = {
+  app_eyebrow: { ta: "مساحة مخبر وبحث علمي", ar: "مساحة مخبر وبحث علمي", en: "Scientific Lab and Research Workspace", fr: "Espace scientifique de labo et de recherche" },
+  app_subtitle: { ta: "Lab Asis | لاب أسيس | من إنجاز Tasnim Gassem", ar: "Lab Asis | لاب أسيس | من إنجاز Tasnim Gassem", en: "Lab Asis | لاب أسيس | Created by Tasnim Gassem", fr: "Lab Asis | لاب أسيس | Créé par Tasnim Gassem" },
+  sidebar_brand_copy: { ta: "خدمة علمية في بلاصة وحدة", ar: "سير عمل علمي في مكان واحد", en: "Scientific workflow, one place", fr: "Flux scientifique, un seul endroit" },
+  nav_dashboard_title: { ta: "لوحة العمل", ar: "لوحة العمل", en: "Dashboard", fr: "Tableau de bord" },
+  nav_dashboard_copy: { ta: "ابدا من هنا", ar: "ابدأ من هنا", en: "Start here", fr: "Commencer ici" },
+  nav_new_experiment_title: { ta: "تجربة جديدة", ar: "تجربة جديدة", en: "New Experiment", fr: "Nouvelle expérience" },
+  nav_new_experiment_copy: { ta: "بروتوكول + مؤقت + ملاحظة", ar: "بروتوكول + مؤقت + ملاحظة", en: "Protocol + timer + note", fr: "Protocole + minuteur + note" },
+  nav_lab_notes_copy: { ta: "ملاحظات ونتائج", ar: "ملاحظات ونتائج", en: "Observations and results", fr: "Observations et résultats" },
+  results_title: { ta: "النتائج", ar: "النتائج", en: "Results", fr: "Résultats" },
+  nav_results_copy: { ta: "ملفات وبيانات", ar: "ملفات وبيانات", en: "Files and datasets", fr: "Fichiers et jeux de données" },
+  read_and_cite_title: { ta: "اقرا ووثّق", ar: "اقرأ ووثّق", en: "Read & Cite", fr: "Lire et citer" },
+  nav_read_cite_copy: { ta: "مقالات وملخصات ومراجع", ar: "مقالات وملخصات ومراجع", en: "Articles, summaries, citations", fr: "Articles, résumés, citations" },
+  tools_title: { ta: "الأدوات", ar: "الأدوات", en: "Tools", fr: "Outils" },
+  nav_tools_copy: { ta: "مؤقت وOCR ومحول وتركيز", ar: "مؤقت وOCR ومحوّل وتركيز", en: "Timer, OCR, converter, focus", fr: "Minuteur, OCR, convertisseur, focus" },
+  settings_title: { ta: "الإعدادات", ar: "الإعدادات", en: "Settings", fr: "Paramètres" },
+  nav_settings_copy: { ta: "اللغة والنسخ الاحتياطي", ar: "اللغة والنسخ الاحتياطي", en: "Language and backup", fr: "Langue et sauvegarde" },
+  hero_kicker: { ta: "مساحة علمية بسيطة", ar: "مساحة علمية بسيطة", en: "Simple scientific workspace", fr: "Espace scientifique simple" },
+  hero_title: { ta: "كل ما تحتاجه لخدمتك في اللاب، بلا تعقيد.", ar: "كل ما تحتاجه للعمل المخبري، من دون تعقيد.", en: "Everything you need for lab work, without the confusion.", fr: "Tout ce qu’il faut pour le travail au labo, sans confusion." },
+  hero_copy: { ta: "استعمل لوحة وحدة باش تبدأ تجربة، تسجل ملاحظة، تحفظ النتائج، وتدير الأوراق العلمية من غير ما تتلف.", ar: "استخدم لوحة واحدة لبدء تجربة، وتسجيل ملاحظة، وحفظ النتائج، وإدارة الأوراق العلمية من دون تشتت.", en: "Use one clean dashboard to start an experiment, save a note, store results, and manage papers without getting lost in too many screens.", fr: "Utilisez un tableau clair pour démarrer une expérience, enregistrer une note, stocker des résultats et gérer des articles sans vous perdre." },
+  start_kicker: { ta: "ابدا", ar: "ابدأ", en: "Start", fr: "Démarrer" },
+  start_experiment_title: { ta: "ابدا تجربة", ar: "ابدأ تجربة", en: "Start Experiment", fr: "Démarrer une expérience" },
+  start_experiment_copy: { ta: "بروتوكول ومؤقت وملاحظات ونتائج في مسار واحد.", ar: "بروتوكول ومؤقت وملاحظات ونتائج في مسار واحد.", en: "Protocol, timer, notes, and results in one flow.", fr: "Protocole, minuteur, notes et résultats dans un seul flux." },
+  write_note_title: { ta: "اكتب ملاحظة", ar: "اكتب ملاحظة", en: "Write Note", fr: "Écrire une note" },
+  write_note_copy: { ta: "احفظ الملاحظات والنتائج بسرعة.", ar: "احفظ الملاحظات والنتائج بسرعة.", en: "Save observations and results quickly.", fr: "Enregistrez rapidement observations et résultats." },
+  save_result_title: { ta: "احفظ نتيجة", ar: "احفظ نتيجة", en: "Save Result", fr: "Enregistrer un résultat" },
+  save_result_copy: { ta: "خلي الملفات والجداول والصور والبيانات في بلاصة وحدة.", ar: "اجمع الملفات والجداول والصور والبيانات في مكان واحد.", en: "Keep files, sheets, images, and datasets together.", fr: "Gardez fichiers, tableaux, images et données ensemble." },
+  read_and_cite_copy: { ta: "ابحث على الأوراق، لخّصها، واحفظ المراجع.", ar: "ابحث عن الأوراق، لخّصها، واحفظ المراجع.", en: "Search papers, summarize them, and save citations.", fr: "Cherchez des articles, résumez-les et enregistrez les citations." },
+  organize_work_kicker: { ta: "نظم خدمتك", ar: "نظّم عملك", en: "Organize your work", fr: "Organisez votre travail" },
+  essentials_title: { ta: "الأساسيات", ar: "الأساسيات", en: "The essentials", fr: "L’essentiel" },
+  advanced_research_kicker: { ta: "نظرة بحثية متقدمة", ar: "عرض بحثي متقدم", en: "Advanced research view", fr: "Vue recherche avancée" },
+  advanced_research_title: { ta: "نظرة عامة ودعم القرار", ar: "نظرة عامة ودعم القرار", en: "Overview and decision support", fr: "Vue d’ensemble et aide à la décision" },
+  small_tools_kicker: { ta: "أدوات صغيرة ومفيدة", ar: "أدوات صغيرة ومفيدة", en: "Small helpful tools", fr: "Petits outils utiles" },
+  fast_utilities_title: { ta: "أدوات سريعة", ar: "أدوات سريعة", en: "Fast utilities", fr: "Utilitaires rapides" },
+  open_tool_box: { ta: "افتح صندوق الأدوات", ar: "افتح صندوق الأدوات", en: "Open Tool Box", fr: "Ouvrir la boîte à outils" },
+  daily_learning_title: { ta: "عادة التعلّم اليومية", ar: "عادة التعلّم اليومية", en: "Daily learning habit", fr: "Habitude d’apprentissage quotidienne" },
+  daily_learning_copy: { ta: "سجل كل يوم فائدة، غلطة، أو فكرة صغيرة.", ar: "سجّل كل يوم فائدة، أو خطأ، أو فكرة صغيرة.", en: "Log one takeaway, one mistake, or one small insight every day.", fr: "Notez chaque jour une idée utile, une erreur ou un petit apprentissage." },
+  research_library_title: { ta: "مكتبة البحث", ar: "مكتبة البحث", en: "Research Library", fr: "Bibliothèque de recherche" },
+  reading_workflow_kicker: { ta: "مسار القراءة", ar: "مسار القراءة", en: "Reading workflow", fr: "Flux de lecture" },
+  reading_workflow_title: { ta: "ابحث، لخّص، ووثّق في بلاصة وحدة", ar: "ابحث، لخّص، ووثّق في مكان واحد", en: "Search, summarize, and cite in one place", fr: "Chercher, résumer et citer au même endroit" },
+  reading_workflow_copy: { ta: "استعمل القسم هذا وقت تقرا أوراق علمية، تكتب مراجعة، ولا تحضر بيبليوغرافيا.", ar: "استخدم هذا القسم عند قراءة الأوراق العلمية، أو كتابة مراجعة، أو إعداد قائمة مراجع.", en: "Use this area when you are reading papers, writing a review, or building a bibliography.", fr: "Utilisez cette zone pour lire des articles, rédiger une revue ou construire une bibliographie." },
+  article_search_title: { ta: "بحث المقالات", ar: "بحث المقالات", en: "Article Search", fr: "Recherche d’articles" },
+  article_search_copy: { ta: "افتح مصادر علمية موثوقة بسرعة", ar: "افتح مصادر علمية موثوقة بسرعة", en: "Open trusted article sources fast", fr: "Ouvrez rapidement des sources scientifiques fiables" },
+  paper_summaries_title: { ta: "ملخصات الأوراق", ar: "ملخصات الأوراق", en: "Paper Summaries", fr: "Résumés d’articles" },
+  paper_summaries_copy: { ta: "احفظ الطرق والنتائج والقيود والاقتباسات", ar: "احفظ الطرق والنتائج والقيود والاقتباسات", en: "Save methods, findings, limitations, and quotes", fr: "Enregistrez méthodes, résultats, limites et citations" },
+  citation_vault_title: { ta: "خزان المراجع", ar: "خزان المراجع", en: "Citation Vault", fr: "Coffre à citations" },
+  citation_vault_copy: { ta: "احفظ المراجع، وين استعملتها، وBibTeX ونص البيبليوغرافيا", ar: "احفظ المراجع، وأين استُخدمت، وBibTeX ونص الببليوغرافيا", en: "Keep references, used sections, BibTeX, and bibliography text", fr: "Conservez références, sections utilisées, BibTeX et texte de bibliographie" },
+  tool_box_title: { ta: "صندوق الأدوات", ar: "صندوق الأدوات", en: "Tool Box", fr: "Boîte à outils" },
+  tool_box_kicker: { ta: "أدوات سريعة", ar: "أدوات سريعة", en: "Quick utilities", fr: "Utilitaires rapides" },
+  tool_box_banner_title: { ta: "استعمل الأداة اللي تحتاجها فقط، بلا تشويش", ar: "استخدم فقط الأداة التي تحتاجها، من دون تشويش", en: "Use only the tool you need, without extra noise", fr: "Utilisez seulement l’outil nécessaire, sans bruit" },
+  tool_box_banner_copy: { ta: "هاذم هم المساعدين الصغار للتايمر وOCR والتحويلات والملاحظات الصوتية والتركيز.", ar: "هذه هي المساعدات اليومية الصغيرة للتوقيت وOCR والتحويلات والملاحظات الصوتية والتركيز.", en: "These are the small everyday helpers for timing, OCR, conversions, voice notes, and focus.", fr: "Ce sont les petits outils quotidiens pour le timing, l’OCR, les conversions, les notes vocales et la concentration." },
+  tool_cell_copy: { ta: "معادلة مالاسيز وسجل العد", ar: "معادلة مالاسيز وسجل العد", en: "Malassez formula and experiment log", fr: "Formule de Malassez et journal d’expérience" },
+  tool_timer_copy: { ta: "عدة مؤقتات للحضانة والطرد المركزي", ar: "عدة مؤقتات للحضانة والطرد المركزي", en: "Multiple incubation and centrifuge countdowns", fr: "Plusieurs minuteurs d’incubation et de centrifugation" },
+  tool_photo_copy: { ta: "OCR، جداول OD، وتصدير CSV", ar: "OCR، جداول OD، وتصدير CSV", en: "OCR, spectro OD tables, and CSV export", fr: "OCR, tableaux OD et export CSV" },
+  audio_to_text_title: { ta: "صوت إلى نص", ar: "صوت إلى نص", en: "Audio to Text", fr: "Audio vers texte" },
+  audio_to_text_copy: { ta: "ارفع MP3، اسمع التسجيل، اختار اللغة، واحفظ النص والملخص", ar: "ارفع MP3، واستمع للتسجيل، واختر اللغة، واحفظ النص والملخص", en: "Upload MP3, listen back, choose language, save transcript and summary", fr: "Importez un MP3, réécoutez, choisissez la langue, enregistrez le texte et le résumé" },
+  tool_converter_copy: { ta: "تحويلات مخبرية شائعة", ar: "تحويلات مخبرية شائعة", en: "Common wet-lab conversions", fr: "Conversions courantes de laboratoire" },
+  tool_pomodoro_copy: { ta: "جلسات تركيز واستراحة مخصصة", ar: "جلسات تركيز واستراحة مخصّصة", en: "Custom focus sessions and breaks", fr: "Sessions de concentration et pauses personnalisées" },
+  tool_todo_copy: { ta: "مهام، تواريخ، وأولويات", ar: "مهام، تواريخ، وأولويات", en: "Tasks, due dates, and priorities", fr: "Tâches, dates et priorités" },
+  tool_calendar_copy: { ta: "تواريخ التجارب والآجال", ar: "تواريخ التجارب والمواعيد النهائية", en: "Experiment dates and deadlines", fr: "Dates d’expériences et échéances" },
+  tool_failures_copy: { ta: "أخطاء، أسباب، وحلول", ar: "أخطاء، أسباب، وحلول", en: "Mistakes, causes, and fixes", fr: "Erreurs, causes et corrections" },
+  learning_menu_copy: { ta: "سجل كل يوم حاجة صغيرة تعلمتها", ar: "دوّن كل يوم شيئًا صغيرًا تعلّمته", en: "Keep one small learning note every day", fr: "Gardez une petite note d’apprentissage chaque jour" },
+  settings_menu_copy: { ta: "لغة، مزامنة، نسخ احتياطي، وبروفايل", ar: "لغة، مزامنة، نسخ احتياطي، وملف شخصي", en: "Language, sync, backup, and profile", fr: "Langue, sync, sauvegarde et profil" },
+  research_workspace_title: { ta: "مساحة البحث", ar: "مساحة البحث", en: "Research Workspace", fr: "Espace de recherche" },
+  workspace_banner_kicker: { ta: "بلاصة وحدة للتجارب والقراءة", ar: "مكان واحد للتجارب والقراءة", en: "One place for experiments and literature", fr: "Un seul endroit pour expériences et littérature" },
+  workspace_banner_title: { ta: "مصممة لسير علمي حقيقي", ar: "مصممة لسير علمي حقيقي", en: "Built for real scientific workflow", fr: "Conçu pour un vrai flux scientifique" },
+  workspace_banner_copy: { ta: "استعمل اللوحة هاذي باش تشوف شنوة يلزمك الآن، وشنوة محفوظ عندك، ووين موجودة الملفات والملاحظات.", ar: "استخدم هذه اللوحة لترى ما الذي يحتاج انتباهك الآن، وما الذي حفظته بالفعل، وأين توجد ملفاتك وملاحظاتك.", en: "Use this dashboard to see what needs attention now, what knowledge you already saved, and where your files and notes are living.", fr: "Utilisez ce tableau pour voir ce qui demande votre attention, ce que vous avez déjà enregistré et où vivent vos fichiers et notes." },
+  workspace_overview_title: { ta: "نظرة عامة على العمل", ar: "نظرة عامة على العمل", en: "Workspace Overview", fr: "Vue d’ensemble" },
+  workspace_overview_copy: { ta: "أرقام مباشرة من سجلاتك", ar: "أرقام مباشرة من سجلاتك", en: "Live counts from your saved records", fr: "Comptes en direct depuis vos enregistrements" },
+  next_up_title: { ta: "شنوة بعد", ar: "التالي", en: "Next Up", fr: "À faire ensuite" },
+  next_up_copy: { ta: "شنوة يلزم يتعمل بعد", ar: "ما الذي يجب فعله بعد ذلك", en: "What to do next in the workspace", fr: "Ce qu’il faut faire ensuite" },
+  quick_actions_title: { ta: "إجراءات سريعة", ar: "إجراءات سريعة", en: "Quick Actions", fr: "Actions rapides" },
+  quick_actions_copy: { ta: "امشي مباشرة للجزء اللي تحتاجه", ar: "اذهب مباشرة إلى الجزء الذي تحتاجه", en: "Jump straight into the part of your workflow you need", fr: "Accédez directement à la partie utile de votre flux" },
+  open_experiment_runs: { ta: "افتح مسارات التجارب", ar: "افتح مسارات التجارب", en: "Open Experiment Runs", fr: "Ouvrir les sessions d’expérience" },
+  open_research_timeline: { ta: "افتح الخط الزمني للبحث", ar: "افتح الخط الزمني للبحث", en: "Open Research Timeline", fr: "Ouvrir la chronologie de recherche" },
+  open_decision_assistant: { ta: "افتح مساعد القرار", ar: "افتح مساعد القرار", en: "Open Decision Assistant", fr: "Ouvrir l’assistant décisionnel" },
+  open_lab_notes: { ta: "افتح ملاحظات المخبر", ar: "افتح ملاحظات المختبر", en: "Open Lab Notes", fr: "Ouvrir les notes de labo" },
+  open_protocols: { ta: "افتح البروتوكولات", ar: "افتح البروتوكولات", en: "Open Protocols", fr: "Ouvrir les protocoles" },
+  open_results_vault: { ta: "افتح خزان النتائج", ar: "افتح خزان النتائج", en: "Open Results Vault", fr: "Ouvrir le coffre des résultats" },
+  open_paper_summaries: { ta: "افتح ملخصات الأوراق", ar: "افتح ملخصات الأوراق", en: "Open Paper Summaries", fr: "Ouvrir les résumés d’articles" },
+  open_articles: { ta: "افتح المقالات", ar: "افتح المقالات", en: "Open Articles", fr: "Ouvrir les articles" },
+  open_tasks: { ta: "افتح المهام", ar: "افتح المهام", en: "Open Tasks", fr: "Ouvrir les tâches" },
+  open_calendar: { ta: "افتح التقويم", ar: "افتح التقويم", en: "Open Calendar", fr: "Ouvrir le calendrier" },
+  getting_started_title: { ta: "البدء السريع", ar: "البدء السريع", en: "Getting Started", fr: "Prise en main" },
+  getting_started_copy: { ta: "أسرع طريقة باش يخدمك Lab Asis كل نهار", ar: "أسرع طريقة ليصبح Lab Asis مفيدًا كل يوم", en: "The fastest way to make Lab Asis useful every day", fr: "Le moyen le plus rapide de rendre Lab Asis utile chaque jour" },
+  voice_upload_panel_title: { ta: "ارفع MP3 وابني النص", ar: "ارفع MP3 وأنشئ النص", en: "Upload MP3 and Build Transcript", fr: "Importer un MP3 et créer la transcription" },
+  voice_upload_helper: { ta: "بصراحة: ما فماش أداة مجانية أوفلاين في المتصفح تنجم تضمن تحويل صوت إلى نص بنسبة 100% للدّارجة والعربية والفرنسية والإنجليزية. المسار الأسلم هو: ارفع الصوت، اسمعه، اختار لغة النص، صحح النص، وراجعو قبل ما تحفظ الملخص.", ar: "ملاحظة صريحة: لا توجد أداة مجانية تعمل داخل المتصفح من دون خادم يمكنها ضمان تحويل صوت إلى نص بدقة 100% للعربية والدارجة والفرنسية والإنجليزية. المسار الأكثر أمانًا هو: ارفع الصوت، واستمع إليه، واختر لغة النص، وصحّحه، وراجعه قبل حفظ الملخص.", en: "Honest note: no free offline browser tool can promise 100% perfect audio-to-text in Darija, Arabic, French, and English. The safest research workflow is: upload audio, listen to it, choose the transcript language, paste or correct the transcript, verify it against the recording, then save a structured summary.", fr: "Note honnête : aucun outil gratuit hors ligne dans le navigateur ne peut promettre une transcription parfaite à 100 % en darija, arabe, français et anglais. Le flux le plus sûr est : importer l’audio, l’écouter, choisir la langue, corriger le texte, le vérifier puis enregistrer un résumé structuré." },
+  voice_transcript_language: { ta: "لغة النص", ar: "لغة النص", en: "Transcript Language", fr: "Langue de transcription" },
+  voice_lang_mixed: { ta: "مختلط / متعدد اللغات", ar: "مختلط / متعدد اللغات", en: "Mixed / Multilingual", fr: "Mixte / multilingue" },
+  voice_lang_english: { ta: "الإنجليزية", ar: "الإنجليزية", en: "English", fr: "Anglais" },
+  voice_lang_french: { ta: "الفرنسية", ar: "الفرنسية", en: "French", fr: "Français" },
+  voice_lang_arabic: { ta: "العربية", ar: "العربية", en: "Arabic", fr: "Arabe" },
+  voice_lang_tunisian: { ta: "تونسي", ar: "الدارجة التونسية", en: "Tunisian Darija", fr: "Darija tunisienne" },
+  mobile_home: { ta: "الرئيسية", ar: "الرئيسية", en: "Home", fr: "Accueil" },
+  mobile_run: { ta: "تجربة", ar: "تجربة", en: "Run", fr: "Session" },
+  mobile_notes: { ta: "ملاحظات", ar: "ملاحظات", en: "Notes", fr: "Notes" },
+  mobile_library: { ta: "مكتبة", ar: "مكتبة", en: "Library", fr: "Bibliothèque" },
+  mobile_tools: { ta: "أدوات", ar: "أدوات", en: "Tools", fr: "Outils" },
+  extract_cleaner_text: { ta: "استخرج نص أوضح", ar: "استخرج نصًا أوضح", en: "Extract Cleaner Text", fr: "Extraire un texte plus propre" },
+  build_od_table: { ta: "ابني جدول OD", ar: "أنشئ جدول OD", en: "Build OD Table", fr: "Créer le tableau OD" },
+  save_od_table: { ta: "احفظ جدول OD", ar: "احفظ جدول OD", en: "Save OD Table", fr: "Enregistrer le tableau OD" },
+  export_od_csv: { ta: "صدّر CSV متاع OD", ar: "صدّر CSV لـ OD", en: "Export OD CSV", fr: "Exporter le CSV OD" },
+  export_metadata_csv: { ta: "صدّر بيانات CSV", ar: "صدّر بيانات CSV", en: "Export Metadata CSV", fr: "Exporter les métadonnées CSV" },
+  load_summary_template: { ta: "حمّل قالب الملخص", ar: "حمّل قالب الملخص", en: "Load Summary Template", fr: "Charger le modèle de résumé" },
+  draft_summary: { ta: "كوّن ملخص أولي", ar: "أنشئ ملخصًا أوليًا", en: "Draft Summary", fr: "Brouillon de résumé" },
+  save_summary_button: { ta: "احفظ الملخص", ar: "احفظ الملخص", en: "Save Summary", fr: "Enregistrer le résumé" },
+  prepare_citation: { ta: "حضّر المرجع", ar: "حضّر المرجع", en: "Prepare Citation", fr: "Préparer la citation" },
+  save_citation_button: { ta: "احفظ المرجع", ar: "احفظ المرجع", en: "Save Citation", fr: "Enregistrer la citation" },
+  copy_bibliography: { ta: "انسخ البيبليوغرافيا", ar: "انسخ الببليوغرافيا", en: "Copy Bibliography", fr: "Copier la bibliographie" },
+  copy_latex_cite: { ta: "انسخ LaTeX Cite", ar: "انسخ LaTeX Cite", en: "Copy LaTeX Cite", fr: "Copier la citation LaTeX" },
+  copy_bibtex: { ta: "انسخ BibTeX", ar: "انسخ BibTeX", en: "Copy BibTeX", fr: "Copier BibTeX" },
+  autofill_doi: { ta: "عمر تلقائيا من DOI", ar: "املأ تلقائيًا من DOI", en: "Auto-fill from DOI", fr: "Remplir depuis DOI" },
+  export_bib: { ta: "صدّر .bib", ar: "صدّر .bib", en: "Export .bib", fr: "Exporter .bib" },
+  export_bibliography_txt: { ta: "صدّر bibliography TXT", ar: "صدّر bibliography TXT", en: "Export Bibliography TXT", fr: "Exporter la bibliographie TXT" },
+  export_citation_csv: { ta: "صدّر CSV المراجع", ar: "صدّر CSV للمراجع", en: "Export Citation CSV", fr: "Exporter le CSV des citations" },
+  start_guided_run: { ta: "ابدأ مسار موجّه", ar: "ابدأ مسارًا موجّهًا", en: "Start Guided Run", fr: "Démarrer une session guidée" },
+  save_snapshot: { ta: "احفظ لقطة", ar: "احفظ لقطة", en: "Save Snapshot", fr: "Enregistrer l’instantané" },
+  complete_run: { ta: "أكمل المسار", ar: "أكمل المسار", en: "Complete Run", fr: "Terminer la session" },
+  new_run: { ta: "مسار جديد", ar: "مسار جديد", en: "New Run", fr: "Nouvelle session" },
+  send_to_lab_notes: { ta: "ابعث لملاحظات المخبر", ar: "أرسل إلى ملاحظات المختبر", en: "Send to Lab Notes", fr: "Envoyer aux notes de labo" },
+  refresh_timeline: { ta: "حدّث الخط الزمني", ar: "حدّث الخط الزمني", en: "Refresh Timeline", fr: "Actualiser la chronologie" },
+  generate_next_steps: { ta: "ولّد الخطوات الجاية", ar: "أنشئ الخطوات التالية", en: "Generate Next Steps", fr: "Générer les prochaines étapes" },
   app_name: { ta: "لاب أسيس", ar: "لاب أسيس", en: "Lab Asis", fr: "Lab Asis" },
   home_cellcounter: { ta: "عداد الخلايا", ar: "عداد الخلايا", en: "Cell Counter", fr: "Compteur de cellules" },
   home_timer: { ta: "المؤقت", ar: "المؤقت", en: "Timer", fr: "Minuteur" },
@@ -327,7 +452,7 @@ const TIMER_STATE_KEY = "lab-asis-timer-state";
 const POMODORO_STATE_KEY = "lab-asis-pomodoro-state";
 const DB_NAME = "lab-asis-db";
 const DB_VERSION = 8;
-const APP_VERSION = "1.5.1";
+const APP_VERSION = "1.5.4";
 const PUBLIC_APP_URL = "https://tiagassem.github.io/Lab-Asis/";
 const GROUPDOCS_IMAGE_TO_SPREADSHEET_URL = "https://products.groupdocs.app/conversion/image-to-spreadsheet";
 const PDFJS_WORKER_SRC = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
@@ -2089,35 +2214,35 @@ function applyTranslations() {
       ? `${state.photoFile.name} selected`
       : t("no_image_selected");
   }
-  setText("photo-extract", "Extract Cleaner Text");
-  setText("photo-extract-od", "Build OD Table");
-  setText("spectro-save", "Save OD Table");
-  setText("spectro-export", "Export OD CSV");
-  setText("result-save", "Save Result");
-  setText("result-export", "Export Metadata CSV");
-  setText("voice-template", "Load Summary Template");
-  setText("paper-template", "Draft Summary");
-  setText("paper-save", "Save Summary");
-  setText("paper-export", "Save to Excel");
-  setText("article-citation", "Prepare Citation");
-  setText("paper-citation", "Prepare Citation");
-  setText("citation-save", "Save Citation");
-  setText("citation-copy", "Copy Bibliography");
-  setText("citation-copy-cite", "Copy LaTeX Cite");
-  setText("citation-copy-bibtex", "Copy BibTeX");
-  setText("citation-autofill-doi", "Auto-fill from DOI");
-  setText("citation-export-bib", "Export .bib");
-  setText("citation-export-text", "Export Bibliography TXT");
-  setText("citation-export-csv", "Export Citation CSV");
-  setText("run-start", "Start Guided Run");
-  setText("run-save", "Save Snapshot");
-  setText("run-complete", "Complete Run");
-  setText("run-new", "New Run");
-  setText("run-send-note", "Send to Lab Notes");
-  setText("run-export", "Save to Excel");
-  setText("timeline-refresh", "Refresh Timeline");
-  setText("assistant-generate", "Generate Next Steps");
-  setText("assistant-clear", "Clear");
+  setText("photo-extract", t("extract_cleaner_text"));
+  setText("photo-extract-od", t("build_od_table"));
+  setText("spectro-save", t("save_od_table"));
+  setText("spectro-export", t("export_od_csv"));
+  setText("result-save", t("save_result_title"));
+  setText("result-export", t("export_metadata_csv"));
+  setText("voice-template", t("load_summary_template"));
+  setText("paper-template", t("draft_summary"));
+  setText("paper-save", t("save_summary_button"));
+  setText("paper-export", t("save_button"));
+  setText("article-citation", t("prepare_citation"));
+  setText("paper-citation", t("prepare_citation"));
+  setText("citation-save", t("save_citation_button"));
+  setText("citation-copy", t("copy_bibliography"));
+  setText("citation-copy-cite", t("copy_latex_cite"));
+  setText("citation-copy-bibtex", t("copy_bibtex"));
+  setText("citation-autofill-doi", t("autofill_doi"));
+  setText("citation-export-bib", t("export_bib"));
+  setText("citation-export-text", t("export_bibliography_txt"));
+  setText("citation-export-csv", t("export_citation_csv"));
+  setText("run-start", t("start_guided_run"));
+  setText("run-save", t("save_snapshot"));
+  setText("run-complete", t("complete_run"));
+  setText("run-new", t("new_run"));
+  setText("run-send-note", t("send_to_lab_notes"));
+  setText("run-export", t("save_button"));
+  setText("timeline-refresh", t("refresh_timeline"));
+  setText("assistant-generate", t("generate_next_steps"));
+  setText("assistant-clear", t("cell_clear"));
   refreshTimerDraftControls();
 }
 
@@ -4156,11 +4281,30 @@ function updateConverterResult() {
 
 function openScreen(screenName) {
   state.activeScreen = screenName;
+  const navScreenMap = {
+    workspace: "home",
+    timeline: "home",
+    assistant: "home",
+    protocols: "runs",
+    articles: "library",
+    papers: "library",
+    citations: "library",
+    cell: "tools",
+    timer: "tools",
+    todo: "tools",
+    voice: "tools",
+    photo: "tools",
+    converter: "tools",
+    pomodoro: "tools",
+    failures: "tools",
+    learning: "tools",
+  };
+  const activeNavScreen = navScreenMap[screenName] || screenName;
   document.querySelectorAll(".screen").forEach((screen) => {
     screen.classList.toggle("active", screen.id === `screen-${screenName}`);
   });
   document.querySelectorAll("[data-nav-screen]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.navScreen === screenName);
+    button.classList.toggle("active", button.dataset.navScreen === activeNavScreen);
   });
 
   if (screenName === "workspace") {

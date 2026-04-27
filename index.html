@@ -44,9 +44,9 @@
     <div id="app-shell">
       <header class="app-header">
         <div>
-          <p class="eyebrow">Scientific Lab and Research Workspace</p>
+          <p class="eyebrow" data-i18n="app_eyebrow">Scientific Lab and Research Workspace</p>
           <h1 id="app-title" data-i18n="app_name">Lab Asis</h1>
-          <p class="subtitle">Lab Asis | لاب أسيس | Created by Tasnim Gassem</p>
+          <p class="subtitle" data-i18n="app_subtitle">Lab Asis | لاب أسيس | Created by Tasnim Gassem</p>
         </div>
         <button id="install-app" class="outline-button hidden" type="button">
           Install App
@@ -61,58 +61,38 @@
             <div class="sidebar-brand-mark">LA</div>
             <div>
               <div class="sidebar-brand-title">Lab Asis</div>
-              <div class="sidebar-brand-copy">Scientific workflow, one place</div>
+              <div class="sidebar-brand-copy" data-i18n="sidebar_brand_copy">Scientific workflow, one place</div>
             </div>
           </div>
 
           <nav class="sidebar-nav" aria-label="Workspace navigation">
             <button class="sidebar-button active" data-open-screen="home" data-nav-screen="home" type="button">
-              <span class="sidebar-button-title">Home</span>
-              <span class="sidebar-button-copy">All sections</span>
-            </button>
-            <button class="sidebar-button" data-open-screen="workspace" data-nav-screen="workspace" type="button">
-              <span class="sidebar-button-title">Workspace</span>
-              <span class="sidebar-button-copy">Overview and search</span>
+              <span class="sidebar-button-title" data-i18n="nav_dashboard_title">Dashboard</span>
+              <span class="sidebar-button-copy" data-i18n="nav_dashboard_copy">Start here</span>
             </button>
             <button class="sidebar-button" data-open-screen="runs" data-nav-screen="runs" type="button">
-              <span class="sidebar-button-title">Experiment Runs</span>
-              <span class="sidebar-button-copy">Protocol + timer + notes</span>
-            </button>
-            <button class="sidebar-button" data-open-screen="timeline" data-nav-screen="timeline" type="button">
-              <span class="sidebar-button-title">Research Timeline</span>
-              <span class="sidebar-button-copy">Project history</span>
-            </button>
-            <button class="sidebar-button" data-open-screen="assistant" data-nav-screen="assistant" type="button">
-              <span class="sidebar-button-title">Decision Assistant</span>
-              <span class="sidebar-button-copy">Next steps from evidence</span>
+              <span class="sidebar-button-title" data-i18n="nav_new_experiment_title">New Experiment</span>
+              <span class="sidebar-button-copy" data-i18n="nav_new_experiment_copy">Protocol + timer + note</span>
             </button>
             <button class="sidebar-button" data-open-screen="notes" data-nav-screen="notes" type="button">
-              <span class="sidebar-button-title">Lab Notes</span>
-              <span class="sidebar-button-copy">Observations and results</span>
-            </button>
-            <button class="sidebar-button" data-open-screen="protocols" data-nav-screen="protocols" type="button">
-              <span class="sidebar-button-title">Protocols</span>
-              <span class="sidebar-button-copy">Reusable methods</span>
+              <span class="sidebar-button-title" data-i18n="home_labnotes">Lab Notes</span>
+              <span class="sidebar-button-copy" data-i18n="nav_lab_notes_copy">Observations and results</span>
             </button>
             <button class="sidebar-button" data-open-screen="results" data-nav-screen="results" type="button">
-              <span class="sidebar-button-title">Results Vault</span>
-              <span class="sidebar-button-copy">Files and exports</span>
+              <span class="sidebar-button-title" data-i18n="results_title">Results</span>
+              <span class="sidebar-button-copy" data-i18n="nav_results_copy">Files and datasets</span>
             </button>
-            <button class="sidebar-button" data-open-screen="papers" data-nav-screen="papers" type="button">
-              <span class="sidebar-button-title">Paper Summaries</span>
-              <span class="sidebar-button-copy">Literature notes</span>
+            <button class="sidebar-button" data-open-screen="library" data-nav-screen="library" type="button">
+              <span class="sidebar-button-title" data-i18n="read_and_cite_title">Read & Cite</span>
+              <span class="sidebar-button-copy" data-i18n="nav_read_cite_copy">Articles, summaries, citations</span>
             </button>
-            <button class="sidebar-button" data-open-screen="citations" data-nav-screen="citations" type="button">
-              <span class="sidebar-button-title">Citation Vault</span>
-              <span class="sidebar-button-copy">Bibliography and BibTeX</span>
-            </button>
-            <button class="sidebar-button" data-open-screen="calendar" data-nav-screen="calendar" type="button">
-              <span class="sidebar-button-title">Calendar</span>
-              <span class="sidebar-button-copy">Dates and deadlines</span>
+            <button class="sidebar-button" data-open-screen="tools" data-nav-screen="tools" type="button">
+              <span class="sidebar-button-title" data-i18n="tools_title">Tools</span>
+              <span class="sidebar-button-copy" data-i18n="nav_tools_copy">Timer, OCR, converter, focus</span>
             </button>
             <button class="sidebar-button" data-open-screen="language" data-nav-screen="language" type="button">
-              <span class="sidebar-button-title">Settings</span>
-              <span class="sidebar-button-copy">Language and backup</span>
+              <span class="sidebar-button-title" data-i18n="settings_title">Settings</span>
+              <span class="sidebar-button-copy" data-i18n="nav_settings_copy">Language and backup</span>
             </button>
           </nav>
         </aside>
@@ -120,11 +100,11 @@
         <main>
         <section id="screen-home" class="screen active">
           <div class="hero-card">
-            <p class="hero-kicker">Built in Tunisia for students and researchers everywhere</p>
-            <h2>Lab work and research, one workspace</h2>
-            <p>
-              Replace scattered paper notes, loose files, and disconnected reading tools with
-              one organized workspace for experiments, protocols, results, papers, and planning.
+            <p class="hero-kicker" data-i18n="hero_kicker">Simple scientific workspace</p>
+            <h2 data-i18n="hero_title">Everything you need for lab work, without the confusion.</h2>
+            <p data-i18n="hero_copy">
+              Use one clean dashboard to start an experiment, save a note, store results,
+              and manage papers without getting lost in too many screens.
             </p>
           </div>
 
@@ -133,96 +113,167 @@
             <div class="status-pill" id="sync-pill">Local save only</div>
           </div>
 
-          <div class="menu-column">
-            <button class="menu-button" data-open-screen="workspace">
-              <span class="menu-title">Research Workspace</span>
-              <span class="menu-subtitle">Dashboard for notes, protocols, results, papers, and next actions</span>
+          <div class="quick-start-grid">
+            <button class="quick-action-card primary-quick-action" data-open-screen="runs" type="button">
+              <span class="quick-action-kicker" data-i18n="start_kicker">Start</span>
+              <span class="quick-action-title" data-i18n="start_experiment_title">Start Experiment</span>
+              <span class="quick-action-copy" data-i18n="start_experiment_copy">Protocol, timer, notes, and results in one flow.</span>
             </button>
-            <button class="menu-button" data-open-screen="runs">
-              <span class="menu-title">Experiment Runs</span>
-              <span class="menu-subtitle">Guided protocol + timer + notes + results workflow</span>
+            <button class="quick-action-card" data-open-screen="notes" type="button">
+              <span class="quick-action-title" data-i18n="write_note_title">Write Note</span>
+              <span class="quick-action-copy" data-i18n="write_note_copy">Save observations and results quickly.</span>
             </button>
-            <button class="menu-button" data-open-screen="timeline">
-              <span class="menu-title">Research Timeline</span>
-              <span class="menu-subtitle">Project history across notes, failures, results, and papers</span>
+            <button class="quick-action-card" data-open-screen="results" type="button">
+              <span class="quick-action-title" data-i18n="save_result_title">Save Result</span>
+              <span class="quick-action-copy" data-i18n="save_result_copy">Keep files, sheets, images, and datasets together.</span>
             </button>
-            <button class="menu-button" data-open-screen="assistant">
-              <span class="menu-title">Decision Assistant</span>
-              <span class="menu-subtitle">Evidence-based next lab steps from your saved work</span>
-            </button>
-            <button class="menu-button" data-open-screen="cell">
-              <span class="menu-title" data-i18n="home_cellcounter">Cell Counter</span>
-              <span class="menu-subtitle">Malassez formula and experiment log</span>
-            </button>
-            <button class="menu-button" data-open-screen="timer">
-              <span class="menu-title" data-i18n="home_timer">Timer</span>
-              <span class="menu-subtitle">Incubation and centrifuge countdowns</span>
-            </button>
-            <button class="menu-button" data-open-screen="todo">
-              <span class="menu-title" data-i18n="home_todo">To-Do List</span>
-              <span class="menu-subtitle">Tasks, due dates, and priorities</span>
-            </button>
-            <button class="menu-button" data-open-screen="notes">
-              <span class="menu-title" data-i18n="home_labnotes">Lab Notes</span>
-              <span class="menu-subtitle">Daily experiment notes, observations, and results</span>
-            </button>
-            <button class="menu-button" data-open-screen="protocols">
-              <span class="menu-title" data-i18n="home_protocols">Protocols</span>
-              <span class="menu-subtitle">Reusable lab methods, materials, and steps</span>
-            </button>
-            <button class="menu-button" data-open-screen="voice">
-              <span class="menu-title" data-i18n="home_voice">Voice Notes</span>
-              <span class="menu-subtitle">Upload MP3 and replay later</span>
-            </button>
-            <button class="menu-button" data-open-screen="photo">
-              <span class="menu-title" data-i18n="home_photo">Photo to Data</span>
-              <span class="menu-subtitle">Cleaner OCR, spectro OD tables, and CSV export</span>
-            </button>
-            <button class="menu-button" data-open-screen="results">
-              <span class="menu-title">Results Vault</span>
-              <span class="menu-subtitle">GraphPad curves, Excel sheets, microscopy images, PDFs, and raw data</span>
-            </button>
-            <button class="menu-button" data-open-screen="failures">
-              <span class="menu-title" data-i18n="home_failures">Failures Log</span>
-              <span class="menu-subtitle">Mistakes, causes, and fixes</span>
-            </button>
-            <button class="menu-button" data-open-screen="converter">
-              <span class="menu-title" data-i18n="home_converter">Unit Converter</span>
-              <span class="menu-subtitle">Common wet-lab unit conversions</span>
-            </button>
-            <button class="menu-button" data-open-screen="articles">
-              <span class="menu-title" data-i18n="home_articles">Articles</span>
-              <span class="menu-subtitle">PubMed, Europe PMC, CORE, Open Access Button, and OpenAlex</span>
-            </button>
-            <button class="menu-button" data-open-screen="papers">
-              <span class="menu-title">Paper Summaries</span>
-              <span class="menu-subtitle">Trusted article notes with source text, quotes, methods, and conclusions</span>
-            </button>
-            <button class="menu-button" data-open-screen="citations">
-              <span class="menu-title">Citation Vault</span>
-              <span class="menu-subtitle">Save references, what you used from each source, and export bibliography or BibTeX</span>
-            </button>
-            <button class="menu-button" data-open-screen="calendar">
-              <span class="menu-title" data-i18n="home_calendar">Calendar</span>
-              <span class="menu-subtitle">Experiment dates and notes</span>
-            </button>
-            <button class="menu-button" data-open-screen="pomodoro">
-              <span class="menu-title" data-i18n="home_pomodoro">Pomodoro</span>
-              <span class="menu-subtitle">Custom focus sessions and breaks</span>
-            </button>
-            <button class="menu-button" data-open-screen="language">
-              <span class="menu-title" data-i18n="language_button">Language</span>
-              <span class="menu-subtitle">Language, sync, backup, and profile</span>
+            <button class="quick-action-card" data-open-screen="library" type="button">
+              <span class="quick-action-title" data-i18n="read_and_cite_title">Read & Cite</span>
+              <span class="quick-action-copy" data-i18n="read_and_cite_copy">Search papers, summarize them, and save citations.</span>
             </button>
           </div>
 
-          <div class="support-card">
+          <div class="home-group-grid">
+            <section class="home-group-card">
+              <div class="home-group-header">
+                <p class="home-group-kicker" data-i18n="organize_work_kicker">Organize your work</p>
+                <h3 data-i18n="essentials_title">The essentials</h3>
+              </div>
+              <div class="group-action-list">
+                <button class="group-link-button" data-open-screen="protocols" type="button" data-i18n="home_protocols">Protocols</button>
+                <button class="group-link-button" data-open-screen="results" type="button" data-i18n="results_title">Results</button>
+                <button class="group-link-button" data-open-screen="todo" type="button" data-i18n="home_todo">To-Do List</button>
+                <button class="group-link-button" data-open-screen="calendar" type="button" data-i18n="home_calendar">Calendar</button>
+              </div>
+            </section>
+
+            <section class="home-group-card">
+              <div class="home-group-header">
+                <p class="home-group-kicker" data-i18n="advanced_research_kicker">Advanced research view</p>
+                <h3 data-i18n="advanced_research_title">Overview and decision support</h3>
+              </div>
+              <div class="group-action-list">
+                <button class="group-link-button" data-open-screen="workspace" type="button" data-i18n="workspace_overview_title">Workspace Overview</button>
+                <button class="group-link-button" data-open-screen="timeline" type="button" data-i18n="research_timeline_title">Research Timeline</button>
+                <button class="group-link-button" data-open-screen="assistant" type="button" data-i18n="decision_assistant_title">Decision Assistant</button>
+              </div>
+            </section>
+
+            <section class="home-group-card">
+              <div class="home-group-header">
+                <p class="home-group-kicker" data-i18n="small_tools_kicker">Small helpful tools</p>
+                <h3 data-i18n="fast_utilities_title">Fast utilities</h3>
+              </div>
+              <div class="group-action-list">
+                <button class="group-link-button" data-open-screen="tools" type="button" data-i18n="open_tool_box">Open Tool Box</button>
+                <button class="group-link-button" data-open-screen="cell" type="button" data-i18n="home_cellcounter">Cell Counter</button>
+                <button class="group-link-button" data-open-screen="timer" type="button" data-i18n="home_timer">Timer</button>
+                <button class="group-link-button" data-open-screen="photo" type="button" data-i18n="home_photo">Photo to Data</button>
+                <button class="group-link-button" data-open-screen="voice" type="button" data-i18n="audio_to_text_title">Audio to Text</button>
+              </div>
+            </section>
+          </div>
+
+          <div class="support-card support-card-compact">
             <div>
-              <h3>Today I Learned</h3>
-              <p>Keep one quick learning note every day, even if it is small.</p>
+              <h3 data-i18n="daily_learning_title">Daily learning habit</h3>
+              <p data-i18n="daily_learning_copy">Log one takeaway, one mistake, or one small insight every day.</p>
             </div>
-            <button class="secondary-button" data-open-screen="learning" type="button">
-              Open Learning Log
+            <div class="support-actions">
+              <button class="secondary-button" data-open-screen="learning" type="button">Today I Learned</button>
+              <button class="secondary-button" data-open-screen="failures" type="button" data-i18n="home_failures">Failures Log</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="screen-library" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="research_library_title">Research Library</h2>
+          </div>
+
+          <div class="workspace-banner compact-banner">
+            <div>
+              <p class="workspace-kicker" data-i18n="reading_workflow_kicker">Reading workflow</p>
+              <h3 data-i18n="reading_workflow_title">Search, summarize, and cite in one place</h3>
+              <p data-i18n="reading_workflow_copy">Use this area when you are reading papers, writing a review, or building a bibliography.</p>
+            </div>
+          </div>
+
+          <div class="menu-column compact-menu-column">
+            <button class="menu-button" data-open-screen="articles" type="button">
+              <span class="menu-title" data-i18n="article_search_title">Article Search</span>
+              <span class="menu-subtitle" data-i18n="article_search_copy">Open trusted article sources fast</span>
+            </button>
+            <button class="menu-button" data-open-screen="papers" type="button">
+              <span class="menu-title" data-i18n="paper_summaries_title">Paper Summaries</span>
+              <span class="menu-subtitle" data-i18n="paper_summaries_copy">Save methods, findings, limitations, and quotes</span>
+            </button>
+            <button class="menu-button" data-open-screen="citations" type="button">
+              <span class="menu-title" data-i18n="citation_vault_title">Citation Vault</span>
+              <span class="menu-subtitle" data-i18n="citation_vault_copy">Keep references, used sections, BibTeX, and bibliography text</span>
+            </button>
+          </div>
+        </section>
+
+        <section id="screen-tools" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2 data-i18n="tool_box_title">Tool Box</h2>
+          </div>
+
+          <div class="workspace-banner compact-banner">
+            <div>
+              <p class="workspace-kicker" data-i18n="tool_box_kicker">Quick utilities</p>
+              <h3 data-i18n="tool_box_banner_title">Use only the tool you need, without extra noise</h3>
+              <p data-i18n="tool_box_banner_copy">These are the small everyday helpers for timing, OCR, conversions, voice notes, and focus.</p>
+            </div>
+          </div>
+
+          <div class="menu-column compact-menu-column">
+            <button class="menu-button" data-open-screen="cell" type="button">
+              <span class="menu-title" data-i18n="home_cellcounter">Cell Counter</span>
+              <span class="menu-subtitle" data-i18n="tool_cell_copy">Malassez formula and experiment log</span>
+            </button>
+            <button class="menu-button" data-open-screen="timer" type="button">
+              <span class="menu-title" data-i18n="home_timer">Timer</span>
+              <span class="menu-subtitle" data-i18n="tool_timer_copy">Multiple incubation and centrifuge countdowns</span>
+            </button>
+            <button class="menu-button" data-open-screen="photo" type="button">
+              <span class="menu-title" data-i18n="home_photo">Photo to Data</span>
+              <span class="menu-subtitle" data-i18n="tool_photo_copy">OCR, spectro OD tables, and CSV export</span>
+            </button>
+            <button class="menu-button" data-open-screen="voice" type="button">
+              <span class="menu-title" data-i18n="audio_to_text_title">Audio to Text</span>
+              <span class="menu-subtitle" data-i18n="audio_to_text_copy">Upload MP3, listen back, choose language, save transcript and summary</span>
+            </button>
+            <button class="menu-button" data-open-screen="converter" type="button">
+              <span class="menu-title" data-i18n="home_converter">Unit Converter</span>
+              <span class="menu-subtitle" data-i18n="tool_converter_copy">Common wet-lab conversions</span>
+            </button>
+            <button class="menu-button" data-open-screen="pomodoro" type="button">
+              <span class="menu-title" data-i18n="home_pomodoro">Pomodoro</span>
+              <span class="menu-subtitle" data-i18n="tool_pomodoro_copy">Custom focus sessions and breaks</span>
+            </button>
+            <button class="menu-button" data-open-screen="todo" type="button">
+              <span class="menu-title" data-i18n="home_todo">To-Do List</span>
+              <span class="menu-subtitle" data-i18n="tool_todo_copy">Tasks, due dates, and priorities</span>
+            </button>
+            <button class="menu-button" data-open-screen="calendar" type="button">
+              <span class="menu-title" data-i18n="home_calendar">Calendar</span>
+              <span class="menu-subtitle" data-i18n="tool_calendar_copy">Experiment dates and deadlines</span>
+            </button>
+            <button class="menu-button" data-open-screen="failures" type="button">
+              <span class="menu-title" data-i18n="home_failures">Failures Log</span>
+              <span class="menu-subtitle" data-i18n="tool_failures_copy">Mistakes, causes, and fixes</span>
+            </button>
+            <button class="menu-button" data-open-screen="learning" type="button">
+              <span class="menu-title" data-i18n="today_i_learned">Today I Learned</span>
+              <span class="menu-subtitle" data-i18n="learning_menu_copy">Keep one small learning note every day</span>
+            </button>
+            <button class="menu-button" data-open-screen="language" type="button">
+              <span class="menu-title" data-i18n="settings_title">Settings</span>
+              <span class="menu-subtitle" data-i18n="settings_menu_copy">Language, sync, backup, and profile</span>
             </button>
           </div>
         </section>
@@ -230,14 +281,14 @@
         <section id="screen-workspace" class="screen">
           <div class="screen-header">
             <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
-            <h2>Research Workspace</h2>
+            <h2 data-i18n="research_workspace_title">Research Workspace</h2>
           </div>
 
           <div class="workspace-banner">
             <div>
-              <p class="workspace-kicker">One place for experiments and literature</p>
-              <h3>Built for real scientific workflow</h3>
-              <p>
+              <p class="workspace-kicker" data-i18n="workspace_banner_kicker">One place for experiments and literature</p>
+              <h3 data-i18n="workspace_banner_title">Built for real scientific workflow</h3>
+              <p data-i18n="workspace_banner_copy">
                 Use this dashboard to see what needs attention now, what knowledge you already
                 saved, and where your files and notes are living.
               </p>
@@ -247,43 +298,43 @@
           <div class="panel-grid">
             <article class="panel">
               <div class="panel-heading">
-                <h3>Workspace Overview</h3>
-                <span class="helper-text">Live counts from your saved records</span>
+                <h3 data-i18n="workspace_overview_title">Workspace Overview</h3>
+                <span class="helper-text" data-i18n="workspace_overview_copy">Live counts from your saved records</span>
               </div>
               <div id="workspace-metrics" class="workspace-metrics"></div>
             </article>
 
             <article class="panel">
               <div class="panel-heading">
-                <h3>Next Up</h3>
-                <span class="helper-text">What to do next in the workspace</span>
+                <h3 data-i18n="next_up_title">Next Up</h3>
+                <span class="helper-text" data-i18n="next_up_copy">What to do next in the workspace</span>
               </div>
               <div id="workspace-summary" class="list-stack"></div>
             </article>
 
             <article class="panel panel-span">
               <div class="panel-heading">
-                <h3>Quick Actions</h3>
-                <span class="helper-text">Jump straight into the part of your workflow you need</span>
+                <h3 data-i18n="quick_actions_title">Quick Actions</h3>
+                <span class="helper-text" data-i18n="quick_actions_copy">Jump straight into the part of your workflow you need</span>
               </div>
               <div class="workspace-actions">
-                <button class="secondary-button" data-open-screen="runs" type="button">Open Experiment Runs</button>
-                <button class="secondary-button" data-open-screen="timeline" type="button">Open Research Timeline</button>
-                <button class="secondary-button" data-open-screen="assistant" type="button">Open Decision Assistant</button>
-                <button class="secondary-button" data-open-screen="notes" type="button">Open Lab Notes</button>
-                <button class="secondary-button" data-open-screen="protocols" type="button">Open Protocols</button>
-                <button class="secondary-button" data-open-screen="results" type="button">Open Results Vault</button>
-                <button class="secondary-button" data-open-screen="papers" type="button">Open Paper Summaries</button>
-                <button class="secondary-button" data-open-screen="articles" type="button">Open Articles</button>
-                <button class="secondary-button" data-open-screen="todo" type="button">Open Tasks</button>
-                <button class="secondary-button" data-open-screen="calendar" type="button">Open Calendar</button>
+                <button class="secondary-button" data-open-screen="runs" type="button" data-i18n="open_experiment_runs">Open Experiment Runs</button>
+                <button class="secondary-button" data-open-screen="timeline" type="button" data-i18n="open_research_timeline">Open Research Timeline</button>
+                <button class="secondary-button" data-open-screen="assistant" type="button" data-i18n="open_decision_assistant">Open Decision Assistant</button>
+                <button class="secondary-button" data-open-screen="notes" type="button" data-i18n="open_lab_notes">Open Lab Notes</button>
+                <button class="secondary-button" data-open-screen="protocols" type="button" data-i18n="open_protocols">Open Protocols</button>
+                <button class="secondary-button" data-open-screen="results" type="button" data-i18n="open_results_vault">Open Results Vault</button>
+                <button class="secondary-button" data-open-screen="papers" type="button" data-i18n="open_paper_summaries">Open Paper Summaries</button>
+                <button class="secondary-button" data-open-screen="articles" type="button" data-i18n="open_articles">Open Articles</button>
+                <button class="secondary-button" data-open-screen="todo" type="button" data-i18n="open_tasks">Open Tasks</button>
+                <button class="secondary-button" data-open-screen="calendar" type="button" data-i18n="open_calendar">Open Calendar</button>
               </div>
             </article>
 
             <article class="panel">
               <div class="panel-heading">
-                <h3>Getting Started</h3>
-                <span class="helper-text">The fastest way to make Lab Asis useful every day</span>
+                <h3 data-i18n="getting_started_title">Getting Started</h3>
+                <span class="helper-text" data-i18n="getting_started_copy">The fastest way to make Lab Asis useful every day</span>
               </div>
               <div id="workspace-checklist" class="list-stack"></div>
             </article>
@@ -659,20 +710,20 @@
         <section id="screen-voice" class="screen">
           <div class="screen-header">
             <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
-            <h2 data-i18n="home_voice">Voice Notes</h2>
+            <h2 data-i18n="audio_to_text_title">Audio to Text</h2>
           </div>
 
           <div class="panel-grid">
             <article class="panel">
-              <h3>Upload Voice Note</h3>
+              <h3 data-i18n="voice_upload_panel_title">Upload MP3 and Build Transcript</h3>
               <p class="helper-text" data-i18n="voice_instruction">
                 Use your phone's voice recorder then upload the file
               </p>
-              <p class="helper-text">
+              <p class="helper-text" data-i18n="voice_upload_helper">
                 Honest note: no free offline browser tool can promise 100% perfect audio-to-text in
                 Darija, Arabic, French, and English. The safest research workflow is:
-                upload audio, paste or correct the transcript, verify it against the recording, then
-                save a structured summary.
+                upload audio, listen to it, choose the transcript language, paste or correct the
+                transcript, verify it against the recording, then save a structured summary.
               </p>
               <label class="field">
                 <span data-i18n="voice_experiment">Experiment Name</span>
@@ -687,13 +738,13 @@
                 <input id="voice-file" type="file" accept=".mp3,audio/mpeg,audio/mp3,audio/*" />
               </label>
               <label class="field">
-                <span>Transcript Language</span>
+                <span data-i18n="voice_transcript_language">Transcript Language</span>
                 <select id="voice-transcript-language">
-                  <option value="Mixed">Mixed / Multilingual</option>
-                  <option value="English">English</option>
-                  <option value="French">French</option>
-                  <option value="Arabic">Arabic</option>
-                  <option value="Tunisian Darija">Tunisian Darija</option>
+                  <option value="Mixed" data-i18n="voice_lang_mixed">Mixed / Multilingual</option>
+                  <option value="English" data-i18n="voice_lang_english">English</option>
+                  <option value="French" data-i18n="voice_lang_french">French</option>
+                  <option value="Arabic" data-i18n="voice_lang_arabic">Arabic</option>
+                  <option value="Tunisian Darija" data-i18n="voice_lang_tunisian">Tunisian Darija</option>
                 </select>
               </label>
               <label class="field">
@@ -1730,6 +1781,24 @@
         </section>
         </main>
       </div>
+
+      <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+        <button class="mobile-nav-button active" data-open-screen="home" data-nav-screen="home" type="button">
+          <span class="mobile-nav-label" data-i18n="mobile_home">Home</span>
+        </button>
+        <button class="mobile-nav-button" data-open-screen="runs" data-nav-screen="runs" type="button">
+          <span class="mobile-nav-label" data-i18n="mobile_run">Run</span>
+        </button>
+        <button class="mobile-nav-button" data-open-screen="notes" data-nav-screen="notes" type="button">
+          <span class="mobile-nav-label" data-i18n="mobile_notes">Notes</span>
+        </button>
+        <button class="mobile-nav-button" data-open-screen="library" data-nav-screen="library" type="button">
+          <span class="mobile-nav-label" data-i18n="mobile_library">Library</span>
+        </button>
+        <button class="mobile-nav-button" data-open-screen="tools" data-nav-screen="tools" type="button">
+          <span class="mobile-nav-label" data-i18n="mobile_tools">Tools</span>
+        </button>
+      </nav>
 
       <footer class="app-footer">
         <p>© 2026 Lab Asis. Created by Tasnim Gassem. All rights reserved.</p>

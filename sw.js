@@ -1,13 +1,27 @@
-const CACHE_NAME = "lab-asis-cache-v12";
+const CACHE_NAME = "lab-asis-cache-v17";
 const ASSETS = [
   "./",
   "./index.html",
+  "./index.html?source=pwa",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
   "./icon.svg",
   "./Languages.csv",
+  "./privacy.html",
+  "./terms.html",
+  "./copyright.html",
+  "./404.html",
+  "./robots.txt",
+  "./sitemap.xml",
 ];
+
+function getAppShellFallback(pathname) {
+  if (pathname.endsWith("/styles.css")) return "./styles.css";
+  if (pathname.endsWith("/app.js")) return "./app.js";
+  if (pathname.endsWith("/manifest.webmanifest")) return "./manifest.webmanifest";
+  return "./index.html";
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -49,7 +63,13 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned)).catch(() => undefined);
           return response;
         })
-        .catch(() => caches.match(event.request))
+        .catch(async () => {
+          const cached = await caches.match(event.request);
+          if (cached) {
+            return cached;
+          }
+          return caches.match(getAppShellFallback(requestUrl.pathname));
+        })
     );
     return;
   }

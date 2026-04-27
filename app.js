@@ -288,9 +288,20 @@ const TRANSLATIONS = {
   use_in_note: { ta: "استعمل في ملاحظة", ar: "استعمل في ملاحظة", en: "Use in Note", fr: "Utiliser dans une note" },
   your_protocols: { ta: "بروتوكولاتي", ar: "بروتوكولاتي", en: "Your Protocols", fr: "Vos protocoles" },
   starter_protocols: { ta: "نماذج جاهزة", ar: "نماذج جاهزة", en: "Starter Templates", fr: "Modèles de départ" },
+  publish_and_backup: { ta: "Publishing, Sharing, and Backup", ar: "Publishing, Sharing, and Backup", en: "Publishing, Sharing, and Backup", fr: "Publication, partage et sauvegarde" },
+  publish_ready_help: { ta: "Use your public app link to share Lab Asis, and keep a full backup so your data can move safely between devices.", ar: "Use your public app link to share Lab Asis, and keep a full backup so your data can move safely between devices.", en: "Use your public app link to share Lab Asis, and keep a full backup so your data can move safely between devices.", fr: "Utilisez le lien public de l'application pour partager Lab Asis et garder une sauvegarde complete entre appareils." },
+  public_app_link: { ta: "Public App Link", ar: "Public App Link", en: "Public App Link", fr: "Lien public de l'application" },
+  public_link_note: { ta: "This is the link you can post on LinkedIn, send to colleagues, or install from a phone browser.", ar: "This is the link you can post on LinkedIn, send to colleagues, or install from a phone browser.", en: "This is the link you can post on LinkedIn, send to colleagues, or install from a phone browser.", fr: "C'est le lien a publier sur LinkedIn, a envoyer a vos collegues ou a installer depuis un navigateur mobile." },
+  copy_app_link: { ta: "Copy App Link", ar: "Copy App Link", en: "Copy App Link", fr: "Copier le lien de l'app" },
+  share_app: { ta: "Share App", ar: "Share App", en: "Share App", fr: "Partager l'app" },
+  restore_backup_file: { ta: "Restore Backup File", ar: "Restore Backup File", en: "Restore Backup File", fr: "Fichier de restauration" },
+  restore_backup_note: { ta: "Restore merges backup records into this device and overwrites matching record IDs safely.", ar: "Restore merges backup records into this device and overwrites matching record IDs safely.", en: "Restore merges backup records into this device and overwrites matching record IDs safely.", fr: "La restauration fusionne les enregistrements de sauvegarde et remplace les identifiants correspondants en securite." },
+  restore_backup: { ta: "Restore Backup", ar: "Restore Backup", en: "Restore Backup", fr: "Restaurer la sauvegarde" },
+  version_label: { ta: "Version", ar: "Version", en: "Version", fr: "Version" },
 };
 
 const STORES = [
+  "experimentRuns",
   "labNotes",
   "protocols",
   "cellCounts",
@@ -299,6 +310,7 @@ const STORES = [
   "failures",
   "learnings",
   "articles",
+  "citations",
   "voiceNotes",
   "spectroTables",
   "resultFiles",
@@ -314,9 +326,14 @@ const CELL_DRAFT_KEY = "lab-asis-cell-draft";
 const TIMER_STATE_KEY = "lab-asis-timer-state";
 const POMODORO_STATE_KEY = "lab-asis-pomodoro-state";
 const DB_NAME = "lab-asis-db";
-const DB_VERSION = 4;
+const DB_VERSION = 8;
+const APP_VERSION = "1.5.1";
+const PUBLIC_APP_URL = "https://tiagassem.github.io/Lab-Asis/";
 const GROUPDOCS_IMAGE_TO_SPREADSHEET_URL = "https://products.groupdocs.app/conversion/image-to-spreadsheet";
 const PDFJS_WORKER_SRC = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+const WORKSPACE_REFRESH_STORES = new Set(
+  STORES.filter((storeName) => storeName !== "users")
+);
 
 const DEFAULT_TIMER_DRAFT = {
   name: "",
@@ -416,6 +433,18 @@ const state = {
     notes: "",
     rows: [createEmptySpectroRow()],
   },
+  activeScreen: "home",
+  currentRunId: null,
+  searchFilters: {
+    workspace: "",
+    runs: "",
+    tasks: "",
+    notes: "",
+    protocols: "",
+    papers: "",
+    citations: "",
+    timeline: "",
+  },
   resultFilters: {
     type: "",
     project: "",
@@ -423,6 +452,19 @@ const state = {
 };
 
 const BASE_APP_TITLE = document.title;
+
+function getAppShareUrl() {
+  if (location.protocol === "http:" || location.protocol === "https:") {
+    return new URL("./", location.href).href;
+  }
+  return PUBLIC_APP_URL;
+}
+
+function updateVersionCopy() {
+  const versionText = `${t("version_label")} ${APP_VERSION}`;
+  setText("settings-version-line", versionText);
+  setText("footer-version", versionText);
+}
 
 function t(key) {
   const entry = TRANSLATIONS[key];
@@ -878,6 +920,16 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function matchesSearch(record, query, fields) {
+  const needle = String(query || "").trim().toLowerCase();
+  if (!needle) return true;
+  const haystack = fields
+    .map((field) => String(record?.[field] ?? ""))
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(needle);
+}
+
 function getCurrentProtocolDraft() {
   const title = document.getElementById("protocol-title")?.value.trim() || "";
   const category = document.getElementById("protocol-category")?.value || "";
@@ -901,6 +953,569 @@ function getCurrentProtocolDraft() {
   };
 }
 
+function getCurrentLabNoteDraft() {
+  const title = document.getElementById("note-title")?.value.trim() || "";
+  const noteDate = document.getElementById("note-date")?.value || "";
+  const experimentName = document.getElementById("note-experiment")?.value.trim() || "";
+  const protocolId = document.getElementById("note-protocol")?.value || "";
+  const tags = document.getElementById("note-tags")?.value.trim() || "";
+  const observations = document.getElementById("note-observations")?.value.trim() || "";
+  const results = document.getElementById("note-results")?.value.trim() || "";
+  const nextSteps = document.getElementById("note-nextsteps")?.value.trim() || "";
+  const hasContent = [title, experimentName, tags, observations, results, nextSteps].some(Boolean);
+  if (!hasContent) return null;
+  return {
+    title: title || "Untitled Lab Note",
+    noteDate,
+    experimentName,
+    protocolId,
+    tags,
+    observations,
+    results,
+    nextSteps,
+    language: state.language,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function getCurrentPaperSummaryDraft() {
+  const title = document.getElementById("paper-title")?.value.trim() || "";
+  const authors = document.getElementById("paper-authors")?.value.trim() || "";
+  const url = document.getElementById("paper-url")?.value.trim() || "";
+  const sourceText = document.getElementById("paper-source-text")?.value.trim() || "";
+  const question = document.getElementById("paper-question")?.value.trim() || "";
+  const model = document.getElementById("paper-model")?.value.trim() || "";
+  const methods = document.getElementById("paper-methods")?.value.trim() || "";
+  const findings = document.getElementById("paper-findings")?.value.trim() || "";
+  const limitations = document.getElementById("paper-limitations")?.value.trim() || "";
+  const importance = document.getElementById("paper-importance")?.value.trim() || "";
+  const quotes = document.getElementById("paper-quotes")?.value.trim() || "";
+  const verified = Boolean(document.getElementById("paper-verified")?.checked);
+  const hasContent = [title, authors, url, sourceText, question, model, methods, findings, limitations, importance, quotes].some(Boolean);
+  if (!hasContent) return null;
+  return {
+    title: title || "Untitled Paper Summary",
+    authors,
+    url,
+    sourceText,
+    question,
+    model,
+    methods,
+    findings,
+    limitations,
+    importance,
+    quotes,
+    verified,
+    language: state.language,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function getCurrentCitationDraft() {
+  const id = document.getElementById("citation-editing-id")?.value.trim() || "";
+  const title = document.getElementById("citation-title")?.value.trim() || "";
+  const authors = document.getElementById("citation-authors")?.value.trim() || "";
+  const year = document.getElementById("citation-year")?.value.trim() || "";
+  const journal = document.getElementById("citation-journal")?.value.trim() || "";
+  const doi = document.getElementById("citation-doi")?.value.trim() || "";
+  const url = document.getElementById("citation-url")?.value.trim() || "";
+  const style = document.getElementById("citation-style")?.value || "apa";
+  const project = document.getElementById("citation-project")?.value.trim() || "";
+  const chapter = document.getElementById("citation-chapter")?.value.trim() || "";
+  const usedIn = document.getElementById("citation-used-in")?.value.trim() || "";
+  const usedFor = document.getElementById("citation-used-for")?.value.trim() || "";
+  const evidence = document.getElementById("citation-evidence")?.value.trim() || "";
+  const notes = document.getElementById("citation-notes")?.value.trim() || "";
+  const citationKey = document.getElementById("citation-key")?.value.trim() || "";
+  const linkedSourceId = document.getElementById("citation-linked-id")?.value.trim() || "";
+  const linkedSourceType = document.getElementById("citation-linked-type")?.value.trim() || "";
+  const linkedSourceLabel = document.getElementById("citation-linked-source")?.value.trim() || "";
+  const hasContent = [title, authors, year, journal, doi, url, project, chapter, usedIn, usedFor, evidence, notes, citationKey].some(Boolean);
+  if (!hasContent) return null;
+  return {
+    id,
+    title: title || "Untitled Source",
+    authors,
+    year,
+    journal,
+    doi,
+    url,
+    style,
+    project,
+    chapter,
+    usedIn,
+    usedFor,
+    evidence,
+    notes,
+    citationKey,
+    linkedSourceId,
+    linkedSourceType,
+    linkedSourceLabel,
+    language: state.language,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function extractCitationYear(value = "") {
+  const match = String(value).match(/\b(19|20)\d{2}\b/);
+  return match ? match[0] : "";
+}
+
+function stripYearFromAuthors(value = "") {
+  return String(value)
+    .replace(/\(?\b(19|20)\d{2}\b\)?/g, "")
+    .replace(/[;,()\s]+$/g, "")
+    .trim();
+}
+
+function slugifyCitationToken(value = "") {
+  return String(value)
+    .normalize("NFKD")
+    .replace(/[^\w\s-]/g, "")
+    .toLowerCase()
+    .replace(/[_\s-]+/g, "")
+    .trim();
+}
+
+function getPrimaryAuthorToken(authors = "") {
+  const cleaned = stripYearFromAuthors(authors)
+    .replace(/\bet al\.?/gi, "")
+    .trim();
+  if (!cleaned) return "";
+  const firstChunk = cleaned.split(/;|,|&|\band\b/i)[0].trim();
+  const pieces = firstChunk.split(/\s+/).filter(Boolean);
+  return pieces[pieces.length - 1] || firstChunk;
+}
+
+function getTitleKeyword(title = "") {
+  const stopWords = new Set(["the", "and", "for", "with", "from", "into", "using", "study", "analysis", "effects"]);
+  const parts = String(title)
+    .toLowerCase()
+    .match(/[a-z0-9]+/g);
+  if (!parts?.length) return "source";
+  return parts.find((part) => !stopWords.has(part)) || parts[0];
+}
+
+function buildCitationKey({ authors = "", title = "", year = "" } = {}) {
+  const authorToken = slugifyCitationToken(getPrimaryAuthorToken(authors) || "source");
+  const yearToken = slugifyCitationToken(year || "nd");
+  const titleToken = slugifyCitationToken(getTitleKeyword(title)).slice(0, 18) || "item";
+  return `${authorToken}${yearToken}${titleToken}`;
+}
+
+function normalizeCitationRecord(record = {}) {
+  const title = record.title || "Untitled Source";
+  const rawAuthors = record.authors || "";
+  const year = record.year || extractCitationYear(rawAuthors) || extractCitationYear(record.url || "") || "";
+  const authors = year ? stripYearFromAuthors(rawAuthors) || rawAuthors : rawAuthors;
+  const journal = record.journal || "";
+  const doi = record.doi || "";
+  const url = record.url || "";
+  const style = record.style || "apa";
+  const project = record.project || "";
+  const chapter = record.chapter || "";
+  const citationKey = record.citationKey || buildCitationKey({ authors, title, year });
+  return {
+    ...record,
+    title,
+    authors,
+    year,
+    journal,
+    doi,
+    url,
+    style,
+    project,
+    chapter,
+    citationKey,
+  };
+}
+
+function getSelectedCitationStyle() {
+  return document.getElementById("citation-style")?.value || "apa";
+}
+
+function buildCitationText(record = {}, preferredStyle = "") {
+  const normalized = normalizeCitationRecord(record);
+  const style = (preferredStyle || normalized.style || "apa").toLowerCase();
+  const authorPart = normalized.authors || "Unknown author";
+  const yearPart = normalized.year || "n.d.";
+  const titlePart = normalized.title || "Untitled source";
+  const journalPart = normalized.journal || "";
+  const doiPart = normalized.doi ? `https://doi.org/${normalized.doi.replace(/^https?:\/\/doi\.org\//i, "")}` : "";
+  const urlPart = normalized.url || "";
+
+  if (style === "vancouver") {
+    return `${authorPart}. ${titlePart}. ${journalPart}${journalPart ? "." : ""} ${yearPart}; ${doiPart ? `${doiPart}.` : ""}${!doiPart && urlPart ? `${urlPart}.` : ""}`.replace(/\s+/g, " ").trim();
+  }
+
+  if (style === "mla") {
+    return `${authorPart}. "${titlePart}." ${journalPart}${journalPart ? "," : ""} ${yearPart}${doiPart ? `, ${doiPart}` : urlPart ? `, ${urlPart}` : ""}.`.replace(/\s+/g, " ").trim();
+  }
+
+  return `${authorPart} (${yearPart}). ${titlePart}. ${journalPart ? `${journalPart}.` : ""}${doiPart ? ` ${doiPart}.` : urlPart ? ` ${urlPart}` : ""}`.replace(/\s+/g, " ").trim();
+}
+
+function buildBibtexEntry(record = {}) {
+  const normalized = normalizeCitationRecord(record);
+  const type = normalized.journal ? "article" : "misc";
+  const fields = [
+    ["title", normalized.title],
+    ["author", normalized.authors],
+    ["year", normalized.year],
+    ["journal", normalized.journal],
+    ["doi", normalized.doi],
+    ["url", normalized.url],
+    [
+      "note",
+      [normalized.usedIn ? `Used in: ${normalized.usedIn}` : "", normalized.usedFor ? `Used for: ${normalized.usedFor}` : ""]
+        .filter(Boolean)
+        .join(" | "),
+    ],
+    ["annote", normalized.evidence || normalized.notes || ""],
+  ].filter(([, value]) => String(value || "").trim());
+
+  const body = fields
+    .map(([key, value]) => `  ${key} = {${String(value).replace(/[{}]/g, "")}}`)
+    .join(",\n");
+
+  return `@${type}{${normalized.citationKey || "source"},\n${body}\n}`;
+}
+
+function buildLatexCite(record = {}) {
+  const normalized = normalizeCitationRecord(record);
+  return `\\cite{${normalized.citationKey || "source"}}`;
+}
+
+function populateCitationForm(record = {}) {
+  const normalized = normalizeCitationRecord(record);
+  const fieldMap = {
+    "citation-editing-id": normalized.id || "",
+    "citation-linked-source": normalized.linkedSourceLabel || "",
+    "citation-linked-id": normalized.linkedSourceId || "",
+    "citation-linked-type": normalized.linkedSourceType || "",
+    "citation-title": normalized.title || "",
+    "citation-authors": normalized.authors || "",
+    "citation-year": normalized.year || "",
+    "citation-journal": normalized.journal || "",
+    "citation-key": normalized.citationKey || "",
+    "citation-doi": normalized.doi || "",
+    "citation-url": normalized.url || "",
+    "citation-style": normalized.style || "apa",
+    "citation-project": normalized.project || "",
+    "citation-chapter": normalized.chapter || "",
+    "citation-used-in": normalized.usedIn || "",
+    "citation-used-for": normalized.usedFor || "",
+    "citation-evidence": normalized.evidence || "",
+    "citation-notes": normalized.notes || "",
+  };
+  Object.entries(fieldMap).forEach(([id, value]) => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.value = value;
+    }
+  });
+}
+
+function clearCitationForm() {
+  [
+    "citation-linked-source",
+    "citation-editing-id",
+    "citation-linked-id",
+    "citation-linked-type",
+    "citation-title",
+    "citation-authors",
+    "citation-year",
+    "citation-journal",
+    "citation-key",
+    "citation-doi",
+    "citation-url",
+    "citation-style",
+    "citation-project",
+    "citation-chapter",
+    "citation-used-in",
+    "citation-used-for",
+    "citation-evidence",
+    "citation-notes",
+  ].forEach((id) => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.value = "";
+    }
+  });
+}
+
+function buildCitationDraftFromArticleRecord(record = {}) {
+  return normalizeCitationRecord({
+    linkedSourceId: record.id || "",
+    linkedSourceType: "article",
+    linkedSourceLabel: record.id ? `Saved article: ${record.title || "Article"}` : "Article draft",
+    title: record.title || "",
+    authors: record.authors || "",
+    year: extractCitationYear(record.authors || ""),
+    journal: record.journal || "",
+    doi: extractDoiFromInput(record.url || ""),
+    url: record.url || "",
+    usedFor: record.summary || "",
+  });
+}
+
+function buildCitationDraftFromPaperRecord(record = {}) {
+  return normalizeCitationRecord({
+    linkedSourceId: record.id || "",
+    linkedSourceType: "paperSummary",
+    linkedSourceLabel: record.id ? `Paper summary: ${record.title || "Paper"}` : "Paper summary draft",
+    title: record.title || "",
+    authors: stripYearFromAuthors(record.authors || "") || record.authors || "",
+    year: extractCitationYear(record.authors || ""),
+    journal: record.journal || "",
+    doi: record.doi || extractDoiFromInput(record.url || ""),
+    url: record.url || "",
+    usedFor: record.findings || record.importance || "",
+    evidence: record.quotes || "",
+    notes: record.question || "",
+  });
+}
+
+function buildCitationDraftFromArticleForm() {
+  return buildCitationDraftFromArticleRecord({
+    title: document.getElementById("article-title")?.value.trim() || "",
+    authors: document.getElementById("article-authors")?.value.trim() || "",
+    journal: document.getElementById("article-journal")?.value.trim() || "",
+    url: document.getElementById("article-url")?.value.trim() || "",
+    summary: document.getElementById("article-summary")?.value.trim() || "",
+  });
+}
+
+function buildCitationDraftFromPaperForm() {
+  return buildCitationDraftFromPaperRecord({
+    title: document.getElementById("paper-title")?.value.trim() || "",
+    authors: document.getElementById("paper-authors")?.value.trim() || "",
+    url: document.getElementById("paper-url")?.value.trim() || "",
+    findings: document.getElementById("paper-findings")?.value.trim() || "",
+    importance: document.getElementById("paper-importance")?.value.trim() || "",
+    quotes: document.getElementById("paper-quotes")?.value.trim() || "",
+    question: document.getElementById("paper-question")?.value.trim() || "",
+  });
+}
+
+function extractDoiFromInput(value = "") {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  const doiUrlMatch = text.match(/10\.\d{4,9}\/[-._;()/:A-Z0-9]+/i);
+  return doiUrlMatch ? doiUrlMatch[0].replace(/[)>.,;]+$/g, "") : "";
+}
+
+function parseCrossrefAuthors(authors = []) {
+  return authors
+    .map((author) => [author.family, author.given].filter(Boolean).join(" ").trim())
+    .filter(Boolean)
+    .join("; ");
+}
+
+function parseOpenAlexAuthors(authorships = []) {
+  return authorships
+    .map((authorship) => authorship?.author?.display_name || "")
+    .filter(Boolean)
+    .join("; ");
+}
+
+async function fetchCrossrefCitationMetadata(doi) {
+  const cleanDoi = extractDoiFromInput(doi);
+  if (!cleanDoi) return null;
+  const response = await fetch(`https://api.crossref.org/works/${encodeURIComponent(cleanDoi)}`, {
+    headers: { Accept: "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(`Crossref lookup failed with status ${response.status}`);
+  }
+  const json = await response.json();
+  const message = json?.message || {};
+  const title = Array.isArray(message.title) ? message.title[0] : message.title || "";
+  const journal = Array.isArray(message["container-title"]) ? message["container-title"][0] : message["container-title"] || "";
+  const year = message.issued?.["date-parts"]?.[0]?.[0] || "";
+  const url = message.URL || (cleanDoi ? `https://doi.org/${cleanDoi}` : "");
+  return normalizeCitationRecord({
+    title,
+    authors: parseCrossrefAuthors(message.author || []),
+    year: year ? String(year) : "",
+    journal,
+    doi: message.DOI || cleanDoi,
+    url,
+  });
+}
+
+async function fetchOpenAlexCitationMetadata(doi) {
+  const cleanDoi = extractDoiFromInput(doi);
+  if (!cleanDoi) return null;
+  const response = await fetch(`https://api.openalex.org/works/doi:${encodeURIComponent(cleanDoi)}`, {
+    headers: { Accept: "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(`OpenAlex lookup failed with status ${response.status}`);
+  }
+  const json = await response.json();
+  const journal = json?.primary_location?.source?.display_name || "";
+  const url = json?.doi || json?.id || (cleanDoi ? `https://doi.org/${cleanDoi}` : "");
+  return normalizeCitationRecord({
+    title: json?.display_name || json?.title || "",
+    authors: parseOpenAlexAuthors(json?.authorships || []),
+    year: json?.publication_year ? String(json.publication_year) : "",
+    journal,
+    doi: cleanDoi,
+    url,
+  });
+}
+
+function mergeCitationMetadata(baseRecord = {}, incomingRecord = {}) {
+  const base = normalizeCitationRecord(baseRecord);
+  const incoming = normalizeCitationRecord(incomingRecord);
+  return normalizeCitationRecord({
+    ...base,
+    title: base.title || incoming.title,
+    authors: base.authors || incoming.authors,
+    year: base.year || incoming.year,
+    journal: base.journal || incoming.journal,
+    doi: base.doi || incoming.doi,
+    url: base.url || incoming.url,
+    citationKey: base.citationKey || incoming.citationKey,
+  });
+}
+
+function normalizeDuplicateToken(value = "") {
+  return String(value || "").trim().toLowerCase();
+}
+
+function buildCitationFingerprint(record = {}) {
+  const normalized = normalizeCitationRecord(record);
+  return `${normalizeDuplicateToken(normalized.title)}|${normalizeDuplicateToken(normalized.authors)}|${normalizeDuplicateToken(normalized.year)}`;
+}
+
+function findDuplicateCitation(candidate = {}, records = []) {
+  const normalized = normalizeCitationRecord(candidate);
+  const doiToken = normalizeDuplicateToken(normalized.doi);
+  const keyToken = normalizeDuplicateToken(normalized.citationKey);
+  const fingerprint = buildCitationFingerprint(normalized);
+
+  return records.find((record) => {
+    const existing = normalizeCitationRecord(record);
+    if (normalized.id && existing.id === normalized.id) return false;
+    if (doiToken && normalizeDuplicateToken(existing.doi) === doiToken) return true;
+    if (keyToken && normalizeDuplicateToken(existing.citationKey) === keyToken) return true;
+    return fingerprint && buildCitationFingerprint(existing) === fingerprint;
+  }) || null;
+}
+
+async function updateCitationDuplicateWarning() {
+  const warning = document.getElementById("citation-duplicate-warning");
+  if (!warning) return;
+  const draft = getCurrentCitationDraft();
+  if (!draft) {
+    warning.classList.add("hidden");
+    warning.textContent = "";
+    return;
+  }
+  const duplicate = findDuplicateCitation(draft, await getAllRecords("citations"));
+  if (!duplicate) {
+    warning.classList.add("hidden");
+    warning.textContent = "";
+    return;
+  }
+  warning.textContent = `Possible duplicate found: ${duplicate.title || "Saved citation"}${duplicate.project ? ` | ${duplicate.project}` : ""}${duplicate.chapter ? ` | ${duplicate.chapter}` : ""}`;
+  warning.classList.remove("hidden");
+}
+
+function getLatestSavedRecord(rows = []) {
+  if (!rows.length) return null;
+  return [...rows].sort(
+    (a, b) =>
+      new Date(b.updatedAt || b.createdAt || 0) -
+      new Date(a.updatedAt || a.createdAt || 0)
+  )[0];
+}
+
+function humanizeReportKey(key) {
+  return String(key || "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ")
+    .replace(/\bId\b/g, "ID")
+    .replace(/\bPdf\b/g, "PDF")
+    .replace(/\bOd\b/g, "OD")
+    .replace(/\bUrl\b/g, "URL")
+    .replace(/\bAt\b/g, "At")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function formatReportValue(value) {
+  if (value == null || value === "") return "—";
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  return escapeHtml(String(value)).replace(/\n/g, "<br />");
+}
+
+function shouldUseCardReport(headers, rows) {
+  if (headers.length > 8) return true;
+  return rows.some((row) =>
+    headers.some((header) => String(row?.[header] ?? "").length > 90)
+  );
+}
+
+function buildReportCardsHtml(headers, rows) {
+  return rows
+    .map((row, index) => {
+      const cardTitle = row.title || row.name || row.project || `Record ${index + 1}`;
+      const fields = headers
+        .filter((header) => row[header] != null && row[header] !== "")
+        .map(
+          (header) => `
+            <div class="report-field">
+              <div class="report-field-label">${escapeHtml(humanizeReportKey(header))}</div>
+              <div class="report-field-value">${formatReportValue(row[header])}</div>
+            </div>
+          `
+        )
+        .join("");
+
+      return `
+        <section class="report-card">
+          <div class="report-card-header">
+            <h2>${escapeHtml(cardTitle)}</h2>
+          </div>
+          <div class="report-field-grid">
+            ${fields}
+          </div>
+        </section>
+      `;
+    })
+    .join("");
+}
+
+function buildReportTableHtml(headers, rows) {
+  const tableHead = headers
+    .map((header) => `<th>${escapeHtml(humanizeReportKey(header))}</th>`)
+    .join("");
+  const tableBody = rows
+    .map(
+      (row) =>
+        `<tr>${headers
+          .map((header) => `<td>${formatReportValue(row[header])}</td>`)
+          .join("")}</tr>`
+    )
+    .join("");
+  return `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>${tableHead}</tr>
+        </thead>
+        <tbody>
+          ${tableBody}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
 function buildPdfHtml(title, rows) {
   const createdAt = new Date().toLocaleString();
   const headers = Array.from(
@@ -909,15 +1524,10 @@ function buildPdfHtml(title, rows) {
       return set;
     }, new Set())
   );
-  const tableHead = headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("");
-  const tableBody = rows
-    .map(
-      (row) =>
-        `<tr>${headers
-          .map((header) => `<td>${escapeHtml(row[header] == null ? "" : row[header])}</td>`)
-          .join("")}</tr>`
-    )
-    .join("");
+  const useCardReport = shouldUseCardReport(headers, rows);
+  const reportBody = useCardReport
+    ? buildReportCardsHtml(headers, rows)
+    : buildReportTableHtml(headers, rows);
 
   return `<!DOCTYPE html>
   <html lang="en">
@@ -930,47 +1540,145 @@ function buildPdfHtml(title, rows) {
           font-family: "Segoe UI", Arial, sans-serif;
           margin: 32px;
           color: #212529;
+          background: #ffffff;
         }
         .cover {
-          padding: 24px;
+          padding: 20px 22px;
           border: 2px solid #00a898;
           border-radius: 20px;
-          margin-bottom: 24px;
+          margin-bottom: 14px;
           background: linear-gradient(135deg, rgba(0,168,152,0.08), rgba(255,192,14,0.14));
         }
         h1 {
           margin: 0 0 8px;
           font-size: 2rem;
         }
+        h2 {
+          margin: 0;
+          font-size: 1.08rem;
+        }
         .meta {
           color: #495057;
           margin: 4px 0;
         }
+        .print-note {
+          margin: 10px 0 14px;
+          padding: 8px 10px;
+          border-radius: 14px;
+          background: #eef8f7;
+          border: 1px solid #cfe8e4;
+          color: #35515a;
+          font-size: 0.83rem;
+        }
+        .table-wrap {
+          overflow: visible;
+        }
         table {
           width: 100%;
           border-collapse: collapse;
-          font-size: 0.95rem;
+          table-layout: fixed;
+          font-size: 0.9rem;
         }
         th, td {
           border: 1px solid #d9e0e6;
           text-align: left;
           vertical-align: top;
-          padding: 10px 12px;
+          padding: 10px;
+          overflow-wrap: anywhere;
           word-break: break-word;
+          white-space: normal;
         }
         th {
           background: #eef8f7;
           color: #212529;
+          font-size: 0.82rem;
+          letter-spacing: 0.01em;
         }
         tr:nth-child(even) {
           background: #fafcfc;
         }
+        .report-card {
+          margin-bottom: 12px;
+          padding: 14px 14px 6px;
+          border: 1px solid #d9e0e6;
+          border-radius: 18px;
+          background: linear-gradient(180deg, #ffffff, #fbfcfd);
+          break-inside: auto;
+          page-break-inside: auto;
+        }
+        .report-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 10px;
+          padding-bottom: 8px;
+          border-bottom: 1px solid #e7edf2;
+          break-after: avoid;
+          page-break-after: avoid;
+        }
+        .report-field-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+        .report-field {
+          padding: 8px 10px;
+          border-radius: 14px;
+          background: #f9fbfc;
+          border: 1px solid #e7edf2;
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+        .report-field-label {
+          margin-bottom: 6px;
+          color: #35515a;
+          font-size: 0.8rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+        .report-field-value {
+          color: #212529;
+          line-height: 1.45;
+          overflow-wrap: anywhere;
+          white-space: normal;
+        }
         @media print {
+          @page {
+            size: ${useCardReport ? "A4 portrait" : "A4 landscape"};
+            margin: 12mm;
+          }
           body {
-            margin: 14mm;
+            margin: 0;
           }
           .cover {
             break-inside: avoid;
+            page-break-inside: avoid;
+            margin-bottom: 8px;
+          }
+          .print-note {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            margin: 6px 0 10px;
+          }
+          .report-card {
+            margin-bottom: 8px;
+          }
+          .report-field-label {
+            font-size: 0.74rem;
+          }
+          .report-field-value {
+            font-size: 0.92rem;
+            line-height: 1.35;
+          }
+          .table-wrap {
+            overflow: visible;
+          }
+        }
+        @media (max-width: 820px) {
+          .report-field-grid {
+            grid-template-columns: 1fr;
           }
         }
       </style>
@@ -983,14 +1691,12 @@ function buildPdfHtml(title, rows) {
         <p class="meta">Generated: ${escapeHtml(createdAt)}</p>
         <p class="meta">Language: ${escapeHtml(LANG[state.language] || state.language)}</p>
       </section>
-      <table>
-        <thead>
-          <tr>${tableHead}</tr>
-        </thead>
-        <tbody>
-          ${tableBody}
-        </tbody>
-      </table>
+      <section class="print-note">
+        ${useCardReport
+          ? "This report was optimized in portrait card layout for clear scientific reading and PDF download."
+          : "This report was optimized in landscape table layout for clearer wide-column printing and PDF download."}
+      </section>
+      ${reportBody}
     </body>
   </html>`;
 }
@@ -998,24 +1704,76 @@ function buildPdfHtml(title, rows) {
 async function getRowsForReport(storeName) {
   const rows = await getAllRecords(storeName);
   switch (storeName) {
-    case "protocols":
-      if (rows.length) {
-        return rows.map((row) => ({
-          ...row,
-          source: "Saved protocol",
-        }));
+    case "experimentRuns":
+      {
+        const draft = getRunFormValues();
+        if (draft.title) {
+          return [
+            {
+              ...draft,
+              status: "Draft",
+              source: "Current run builder form",
+            },
+          ];
+        }
+        const latestRun = getLatestSavedRecord(rows);
+        return latestRun
+          ? [
+              {
+                ...latestRun,
+                startedAt: latestRun.startedAt ? formatDateTime(latestRun.startedAt) : "",
+                completedAt: latestRun.completedAt ? formatDateTime(latestRun.completedAt) : "",
+              },
+            ]
+          : [];
       }
-      const draftProtocol = getCurrentProtocolDraft();
-      return draftProtocol
-        ? [
+    case "protocols":
+      {
+        const draftProtocol = getCurrentProtocolDraft();
+        if (draftProtocol) {
+          return [
             {
               ...draftProtocol,
               source: "Current form draft",
             },
-          ]
-        : [];
+          ];
+        }
+        const latestProtocol = getLatestSavedRecord(rows);
+        return latestProtocol
+          ? [
+              {
+                ...latestProtocol,
+                source: "Latest saved protocol",
+              },
+            ]
+          : [];
+      }
+    case "labNotes":
+      {
+        const draftLabNote = getCurrentLabNoteDraft();
+        if (draftLabNote) {
+          return [
+            {
+              ...draftLabNote,
+              source: "Current note form",
+            },
+          ];
+        }
+        const latestLabNote = getLatestSavedRecord(rows);
+        return latestLabNote
+          ? [
+              {
+                ...latestLabNote,
+                source: "Latest saved lab note",
+              },
+            ]
+          : [];
+      }
     case "voiceNotes":
-      return rows.map(({ audioData, ...rest }) => rest);
+      {
+        const latestVoiceNote = getLatestSavedRecord(rows);
+        return latestVoiceNote ? [(({ audioData, ...rest }) => rest)(latestVoiceNote)] : [];
+      }
     case "spectroTables":
       return rows.flatMap((record) => buildSpectroCsvRows(record));
     case "resultFiles":
@@ -1024,10 +1782,55 @@ async function getRowsForReport(storeName) {
         fileSize: formatFileSize(rest.fileSize),
       }));
     case "paperSummaries":
-      return rows.map(({ pdfData, ...rest }) => ({
-        ...rest,
-        pdfSize: formatFileSize(rest.pdfSize),
-      }));
+      {
+        const draftPaper = getCurrentPaperSummaryDraft();
+        if (draftPaper) {
+          return [
+            {
+              ...draftPaper,
+              source: "Current paper summary form",
+            },
+          ];
+        }
+        const latestPaper = getLatestSavedRecord(rows);
+        return latestPaper
+          ? [
+              (({ pdfData, ...rest }) => ({
+                ...rest,
+                pdfSize: formatFileSize(rest.pdfSize),
+                source: "Latest saved paper summary",
+              }))(latestPaper),
+            ]
+          : [];
+      }
+    case "citations":
+      {
+        const draftCitation = getCurrentCitationDraft();
+        if (draftCitation) {
+          const normalizedDraft = normalizeCitationRecord(draftCitation);
+          return [
+            {
+              ...normalizedDraft,
+              bibliography: buildCitationText(normalizedDraft),
+              bibtex: buildBibtexEntry(normalizedDraft),
+              latexCommand: buildLatexCite(normalizedDraft),
+              source: "Current citation form",
+            },
+          ];
+        }
+        const latestCitation = getLatestSavedRecord(rows);
+        if (!latestCitation) return [];
+        const normalizedRecord = normalizeCitationRecord(latestCitation);
+        return [
+          {
+            ...normalizedRecord,
+            bibliography: buildCitationText(normalizedRecord),
+            bibtex: buildBibtexEntry(normalizedRecord),
+            latexCommand: buildLatexCite(normalizedRecord),
+            source: "Latest saved citation",
+          },
+        ];
+      }
     default:
       return rows.map((row) => {
         const cleaned = { ...row };
@@ -1073,6 +1876,14 @@ function setText(id, text) {
   if (element) {
     element.textContent = text;
   }
+}
+
+function addListenerIfPresent(id, eventName, handler) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.addEventListener(eventName, handler);
+  }
+  return element;
 }
 
 function openDb() {
@@ -1149,6 +1960,9 @@ async function syncToWebhook(storeName, payload) {
 async function saveRecord(storeName, record, syncPayload = record) {
   await putRecord(storeName, record);
   await syncToWebhook(storeName, syncPayload);
+  if (WORKSPACE_REFRESH_STORES.has(storeName)) {
+    await renderWorkspace();
+  }
 }
 
 function loadSettings() {
@@ -1205,6 +2019,7 @@ function applyTranslations() {
     "#screen-language .panel:nth-of-type(1) h3": "choose_language",
     "#screen-language .panel:nth-of-type(2) h3": "researcher_profile",
     "#screen-language .panel:nth-of-type(3) h3": "google_sync",
+    "#screen-language .panel:nth-of-type(4) h3": "publish_and_backup",
   };
   Object.entries(selectorMap).forEach(([selector, key]) => {
     const node = document.querySelector(selector);
@@ -1222,6 +2037,9 @@ function applyTranslations() {
     "settings-save-profile": "save_profile",
     "settings-save-webhooks": "save_sync_settings",
     "settings-export-backup": "export_full_backup",
+    "settings-copy-link": "copy_app_link",
+    "settings-share-link": "share_app",
+    "settings-import-backup": "restore_backup",
   };
   Object.entries(buttonMap).forEach(([id, key]) => setText(id, t(key)));
   const presetMap = {
@@ -1257,6 +2075,7 @@ function applyTranslations() {
   if (installButton) {
     installButton.textContent = t("install_app");
   }
+  updateVersionCopy();
   document.querySelectorAll('[data-open-screen="learning"]').forEach((button) => {
     button.textContent = t("open_learning_log");
   });
@@ -1280,6 +2099,25 @@ function applyTranslations() {
   setText("paper-template", "Draft Summary");
   setText("paper-save", "Save Summary");
   setText("paper-export", "Save to Excel");
+  setText("article-citation", "Prepare Citation");
+  setText("paper-citation", "Prepare Citation");
+  setText("citation-save", "Save Citation");
+  setText("citation-copy", "Copy Bibliography");
+  setText("citation-copy-cite", "Copy LaTeX Cite");
+  setText("citation-copy-bibtex", "Copy BibTeX");
+  setText("citation-autofill-doi", "Auto-fill from DOI");
+  setText("citation-export-bib", "Export .bib");
+  setText("citation-export-text", "Export Bibliography TXT");
+  setText("citation-export-csv", "Export Citation CSV");
+  setText("run-start", "Start Guided Run");
+  setText("run-save", "Save Snapshot");
+  setText("run-complete", "Complete Run");
+  setText("run-new", "New Run");
+  setText("run-send-note", "Send to Lab Notes");
+  setText("run-export", "Save to Excel");
+  setText("timeline-refresh", "Refresh Timeline");
+  setText("assistant-generate", "Generate Next Steps");
+  setText("assistant-clear", "Clear");
   refreshTimerDraftControls();
 }
 
@@ -1287,14 +2125,17 @@ function populateSettingsFields() {
   const fieldValues = {
     "settings-name": state.settings.researcherName || "",
     "settings-email": state.settings.researcherEmail || "",
+    "settings-app-link": getAppShareUrl(),
     "webhook-labNotes": state.settings.webhooks?.labNotes || "",
     "webhook-protocols": state.settings.webhooks?.protocols || "",
     "webhook-cellCounts": state.settings.webhooks?.cellCounts || "",
     "webhook-experiments": state.settings.webhooks?.experiments || "",
+    "webhook-experimentRuns": state.settings.webhooks?.experimentRuns || "",
     "webhook-tasks": state.settings.webhooks?.tasks || "",
     "webhook-failures": state.settings.webhooks?.failures || "",
     "webhook-learnings": state.settings.webhooks?.learnings || "",
     "webhook-articles": state.settings.webhooks?.articles || "",
+    "webhook-citations": state.settings.webhooks?.citations || "",
     "webhook-voiceNotes": state.settings.webhooks?.voiceNotes || "",
     "webhook-spectroTables": state.settings.webhooks?.spectroTables || "",
     "webhook-resultFiles": state.settings.webhooks?.resultFiles || "",
@@ -1309,6 +2150,11 @@ function populateSettingsFields() {
       element.value = value;
     }
   });
+  const backupField = document.getElementById("settings-import-backup-file");
+  if (backupField) {
+    backupField.value = "";
+  }
+  updateVersionCopy();
 }
 
 function updateCellDraftUI() {
@@ -1740,9 +2586,11 @@ async function renderTimerRecords() {
 
 async function renderTasks() {
   const container = document.getElementById("todo-records");
-  const records = (await getAllRecords("tasks")).sort((a, b) => new Date(a.dueDate || 0) - new Date(b.dueDate || 0));
+  const records = (await getAllRecords("tasks"))
+    .sort((a, b) => new Date(a.dueDate || 0) - new Date(b.dueDate || 0))
+    .filter((task) => matchesSearch(task, state.searchFilters.tasks, ["title", "priority", "status", "dueDate"]));
   if (!records.length) {
-    container.innerHTML = `<div class="list-item"><div class="item-meta">No tasks yet.</div></div>`;
+    container.innerHTML = `<div class="list-item"><div class="item-meta">No tasks match this search yet.</div></div>`;
     return;
   }
   container.innerHTML = records
@@ -1815,12 +2663,640 @@ async function getProtocolChoiceByValue(value) {
   return protocol ? { ...protocol, source: "saved", selectValue: protocol.id } : null;
 }
 
+async function renderRunProtocolOptions(selectedValue = "") {
+  const select = document.getElementById("run-protocol");
+  if (!select) return;
+  const protocols = (await getAllRecords("protocols"))
+    .map((protocol) => ({ ...protocol, source: "saved", selectValue: protocol.id }))
+    .sort((a, b) => a.title.localeCompare(b.title));
+  const starterOptions = STARTER_PROTOCOLS.map((protocol) => ({
+    ...protocol,
+    selectValue: `starter::${protocol.id}`,
+  }));
+  const currentSelected = selectedValue || select.value || "";
+  const savedGroup = protocols.length
+    ? `<optgroup label="${escapeHtml(t("your_protocols"))}">${protocols
+        .map(
+          (protocol) =>
+            `<option value="${protocol.selectValue}" ${protocol.selectValue === currentSelected ? "selected" : ""}>${escapeHtml(protocol.title)}</option>`
+        )
+        .join("")}</optgroup>`
+    : "";
+  const starterGroup = `<optgroup label="${escapeHtml(t("starter_protocols"))}">${starterOptions
+    .map(
+      (protocol) =>
+        `<option value="${protocol.selectValue}" ${protocol.selectValue === currentSelected ? "selected" : ""}>${escapeHtml(protocol.title)}</option>`
+    )
+    .join("")}</optgroup>`;
+
+  select.innerHTML = [
+    `<option value="">No protocol selected</option>`,
+    savedGroup,
+    starterGroup,
+  ].join("");
+}
+
+function getRunFormValues() {
+  return {
+    title: document.getElementById("run-title")?.value.trim() || "",
+    project: document.getElementById("run-project")?.value.trim() || "",
+    protocolId: document.getElementById("run-protocol")?.value || "",
+    objective: document.getElementById("run-objective")?.value.trim() || "",
+    sampleIds: document.getElementById("run-samples")?.value.trim() || "",
+    plannedMinutes: Math.max(1, Math.floor(Number(document.getElementById("run-duration")?.value || 30) || 30)),
+    notes: document.getElementById("run-notes")?.value.trim() || "",
+    checklistSetup: Boolean(document.getElementById("run-check-setup")?.checked),
+    checklistTimer: Boolean(document.getElementById("run-check-timer")?.checked),
+    checklistNote: Boolean(document.getElementById("run-check-note")?.checked),
+    checklistResult: Boolean(document.getElementById("run-check-result")?.checked),
+  };
+}
+
+async function populateRunForm(record = null) {
+  state.currentRunId = record?.id || null;
+  document.getElementById("run-title").value = record?.title || "";
+  document.getElementById("run-project").value = record?.project || "";
+  await renderRunProtocolOptions(record?.protocolId || "");
+  document.getElementById("run-objective").value = record?.objective || "";
+  document.getElementById("run-samples").value = record?.sampleIds || "";
+  document.getElementById("run-duration").value = Number(record?.plannedMinutes || 30);
+  document.getElementById("run-notes").value = record?.notes || "";
+  document.getElementById("run-check-setup").checked = Boolean(record?.checklistSetup);
+  document.getElementById("run-check-timer").checked = Boolean(record?.checklistTimer);
+  document.getElementById("run-check-note").checked = Boolean(record?.checklistNote);
+  document.getElementById("run-check-result").checked = Boolean(record?.checklistResult);
+}
+
+async function clearRunForm() {
+  await populateRunForm({
+    plannedMinutes: 30,
+  });
+}
+
+function getRunStatusLabel(status = "") {
+  switch (status) {
+    case "Running":
+      return "Running";
+    case "Completed":
+      return "Completed";
+    default:
+      return "Draft";
+  }
+}
+
+function getRunStatusTag(status = "") {
+  switch (status) {
+    case "Running":
+      return "running";
+    case "Completed":
+      return "completed";
+    default:
+      return "warning";
+  }
+}
+
+async function saveExperimentRun({ status = "Draft", createTimer = false, completeNow = false } = {}) {
+  const values = getRunFormValues();
+  if (!values.title) {
+    showToast("Add a run title first.");
+    return null;
+  }
+
+  const existingRuns = await getAllRecords("experimentRuns");
+  const existing = state.currentRunId ? existingRuns.find((item) => item.id === state.currentRunId) : null;
+  const linkedProtocol = await getProtocolChoiceByValue(values.protocolId);
+  const now = new Date().toISOString();
+
+  const record = {
+    id: existing?.id || makeId("run"),
+    createdAt: existing?.createdAt || now,
+    updatedAt: now,
+    status,
+    title: values.title,
+    project: values.project,
+    protocolId: values.protocolId,
+    protocolTitle: linkedProtocol?.title || "",
+    protocolSource: linkedProtocol?.source || "",
+    objective: values.objective,
+    sampleIds: values.sampleIds,
+    plannedMinutes: values.plannedMinutes,
+    notes: values.notes,
+    checklistSetup: values.checklistSetup,
+    checklistTimer: values.checklistTimer,
+    checklistNote: values.checklistNote,
+    checklistResult: values.checklistResult,
+    linkedTimerId: existing?.linkedTimerId || "",
+    startedAt: existing?.startedAt || "",
+    completedAt: existing?.completedAt || "",
+    language: state.language,
+  };
+
+  if (status === "Running" && !record.startedAt) {
+    record.startedAt = now;
+  }
+
+  if (completeNow || status === "Completed") {
+    record.completedAt = now;
+  }
+
+  const hasLinkedTimer = record.linkedTimerId && state.activeTimers.some((timer) => timer.id === record.linkedTimerId);
+  if (createTimer && !hasLinkedTimer) {
+    const activeTimer = createActiveTimerFromDraft({
+      name: record.title,
+      activityTag: record.project || record.protocolTitle || "Experiment Run",
+      minutes: values.plannedMinutes,
+      seconds: 0,
+    });
+    activeTimer.runId = record.id;
+    state.activeTimers.unshift(activeTimer);
+    persistTimerState();
+    record.linkedTimerId = activeTimer.id;
+    record.checklistTimer = true;
+    startActiveTimer(activeTimer.id);
+  }
+
+  await saveRecord("experimentRuns", record);
+  await populateRunForm(record);
+  await renderExperimentRuns();
+  await renderResearchTimeline();
+  await renderDecisionAssistant();
+  return record;
+}
+
+async function sendCurrentRunToLabNotes() {
+  const values = getRunFormValues();
+  if (!values.title) {
+    showToast("Add a run title first.");
+    return;
+  }
+  const linkedProtocol = await getProtocolChoiceByValue(values.protocolId);
+  document.getElementById("note-title").value = `${values.title} - Lab Note`;
+  document.getElementById("note-date").value = toDateInputValue(new Date());
+  document.getElementById("note-experiment").value = values.project || values.title;
+  document.getElementById("note-tags").value = [values.project, values.sampleIds].filter(Boolean).join(", ");
+  document.getElementById("note-observations").value = values.notes || `Run objective: ${values.objective}`;
+  document.getElementById("note-results").value = "";
+  document.getElementById("note-nextsteps").value = linkedProtocol?.steps || "";
+  await renderProtocolOptions(values.protocolId);
+  openScreen("notes");
+  showToast("Experiment run copied into a new lab note.");
+}
+
+async function renderExperimentRuns() {
+  const container = document.getElementById("run-records");
+  if (!container) return;
+  const query = String(state.searchFilters.runs || "").trim().toLowerCase();
+  const records = (await getAllRecords("experimentRuns"))
+    .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
+    .filter((record) =>
+      !query ||
+      matchesSearch(record, query, [
+        "title",
+        "project",
+        "protocolTitle",
+        "objective",
+        "sampleIds",
+        "notes",
+        "status",
+      ])
+    );
+
+  if (!records.length) {
+    container.innerHTML = `<div class="list-item"><div class="item-meta">No experiment runs saved yet.</div></div>`;
+    await renderRunProtocolOptions();
+    return;
+  }
+
+  container.innerHTML = records
+    .map(
+      (record) => `
+        <div class="list-item">
+          <div class="list-item-top">
+            <div>
+              <div class="item-title">${escapeHtml(record.title || "Experiment Run")}</div>
+              <div class="item-meta">${escapeHtml(record.project || "No project")} | ${escapeHtml(record.protocolTitle || "No protocol")}</div>
+            </div>
+            <span class="tag ${getRunStatusTag(record.status)}">${escapeHtml(getRunStatusLabel(record.status))}</span>
+          </div>
+          <div class="item-meta">${record.startedAt ? `Started: ${formatDateTime(record.startedAt)}` : `Created: ${formatDateTime(record.createdAt)}`}</div>
+          <div class="item-meta">${record.sampleIds ? `Samples: ${escapeHtml(record.sampleIds)}` : "Samples: not listed"}</div>
+          <div class="item-meta">${record.notes ? escapeHtml(record.notes) : "No run notes yet."}</div>
+          <div class="list-item-actions">
+            <button class="secondary-button small-button" data-run-load="${record.id}" type="button">Load</button>
+            <button class="outline-button small-button" data-run-note="${record.id}" type="button">Use in Note</button>
+            <button class="danger-button small-button" data-delete-store="experimentRuns" data-delete-id="${record.id}" type="button">Delete</button>
+          </div>
+        </div>
+      `
+    )
+    .join("");
+
+  await renderRunProtocolOptions();
+}
+
+async function buildResearchTimelineItems(focus = "") {
+  const [
+    runs,
+    notes,
+    results,
+    failures,
+    papers,
+    articles,
+    citations,
+    protocols,
+    calendarEvents,
+  ] = await Promise.all([
+    getAllRecords("experimentRuns"),
+    getAllRecords("labNotes"),
+    getAllRecords("resultFiles"),
+    getAllRecords("failures"),
+    getAllRecords("paperSummaries"),
+    getAllRecords("articles"),
+    getAllRecords("citations"),
+    getAllRecords("protocols"),
+    getAllRecords("calendar"),
+  ]);
+
+  const query = String(focus || "").trim().toLowerCase();
+  const itemSets = [
+    runs.map((record) => ({
+      type: "Run",
+      screen: "runs",
+      title: record.title || "Experiment Run",
+      detail: `${record.project || "No project"} | ${record.protocolTitle || "No protocol"} | ${record.status || "Draft"}`,
+      date: record.updatedAt || record.createdAt,
+      haystack: `${record.title || ""} ${record.project || ""} ${record.protocolTitle || ""} ${record.sampleIds || ""} ${record.notes || ""}`,
+    })),
+    notes.map((record) => ({
+      type: "Note",
+      screen: "notes",
+      title: record.title || "Lab Note",
+      detail: `${record.experimentName || "No experiment"} | ${record.noteDate || ""}`,
+      date: record.createdAt,
+      haystack: `${record.title || ""} ${record.experimentName || ""} ${record.tags || ""} ${record.results || ""}`,
+    })),
+    results.map((record) => ({
+      type: "Result",
+      screen: "results",
+      title: record.title || record.fileName || "Result File",
+      detail: `${record.project || "No project"} | ${record.resultType || "Other"}`,
+      date: record.createdAt,
+      haystack: `${record.project || ""} ${record.title || ""} ${record.tags || ""} ${record.orderLabel || ""}`,
+    })),
+    failures.map((record) => ({
+      type: "Failure",
+      screen: "failures",
+      title: record.what || "Failure",
+      detail: record.solution || "No fix recorded",
+      date: record.createdAt,
+      haystack: `${record.what || ""} ${record.why || ""} ${record.solution || ""}`,
+    })),
+    papers.map((record) => ({
+      type: "Paper",
+      screen: "papers",
+      title: record.title || "Paper Summary",
+      detail: `${record.authors || "No authors"}${record.verified ? " | Verified" : " | Needs verification"}`,
+      date: record.createdAt,
+      haystack: `${record.title || ""} ${record.authors || ""} ${record.findings || ""} ${record.methods || ""}`,
+    })),
+    articles.map((record) => ({
+      type: "Article",
+      screen: "articles",
+      title: record.title || "Saved Article",
+      detail: record.url || "",
+      date: record.createdAt,
+      haystack: `${record.title || ""} ${record.summary || ""} ${record.url || ""}`,
+    })),
+    citations.map((record) => ({
+      type: "Citation",
+      screen: "citations",
+      title: record.title || "Citation",
+      detail: `${record.authors || "No authors"}${record.year ? ` | ${record.year}` : ""}${record.project ? ` | ${record.project}` : ""}${record.usedIn ? ` | ${record.usedIn}` : ""}`,
+      date: record.createdAt,
+      haystack: `${record.title || ""} ${record.authors || ""} ${record.journal || ""} ${record.doi || ""} ${record.project || ""} ${record.chapter || ""} ${record.citationKey || ""} ${record.usedFor || ""}`,
+    })),
+    protocols.map((record) => ({
+      type: "Protocol",
+      screen: "protocols",
+      title: record.title || "Protocol",
+      detail: `${record.category || "General Lab"} | ${record.duration || "No duration"}`,
+      date: record.createdAt,
+      haystack: `${record.title || ""} ${record.category || ""} ${record.objective || ""} ${record.steps || ""}`,
+    })),
+    calendarEvents.map((record) => ({
+      type: "Calendar",
+      screen: "calendar",
+      title: record.title || "Calendar Event",
+      detail: `${record.date || ""}${record.time ? ` ${record.time}` : ""}`,
+      date: record.date ? `${record.date}T${record.time || "00:00"}` : record.createdAt,
+      haystack: `${record.title || ""} ${record.date || ""} ${record.notes || ""}`,
+    })),
+  ];
+
+  return itemSets
+    .flat()
+    .filter((item) => !query || item.haystack.toLowerCase().includes(query))
+    .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+}
+
+async function renderResearchTimeline() {
+  const summaryContainer = document.getElementById("timeline-summary");
+  const recordsContainer = document.getElementById("timeline-records");
+  if (!summaryContainer || !recordsContainer) return;
+
+  const focus = state.searchFilters.timeline || document.getElementById("timeline-focus")?.value || "";
+  const items = await buildResearchTimelineItems(focus);
+  const runCount = (await getAllRecords("experimentRuns")).length;
+  const resultCount = (await getAllRecords("resultFiles")).length;
+  const paperCount = (await getAllRecords("paperSummaries")).length;
+  const citationCount = (await getAllRecords("citations")).length;
+  const lastItem = items[0];
+
+  const summaryCards = [
+    { title: "Connected records", meta: `${items.length} items in this filtered history` },
+    { title: "Experiment runs", meta: `${runCount} run records saved` },
+    { title: "Results and papers", meta: `${resultCount} results files | ${paperCount} paper summaries` },
+    { title: "Citations", meta: `${citationCount} saved citation record(s)` },
+    { title: "Latest activity", meta: lastItem ? `${lastItem.type}: ${lastItem.title}` : "No timeline events yet" },
+  ];
+
+  summaryContainer.innerHTML = summaryCards
+    .map(
+      (item) => `
+        <div class="list-item">
+          <div class="item-title">${escapeHtml(item.title)}</div>
+          <div class="item-meta">${escapeHtml(item.meta)}</div>
+        </div>
+      `
+    )
+    .join("");
+
+  if (!items.length) {
+    recordsContainer.innerHTML = `<div class="list-item"><div class="item-meta">No project history matches this filter yet.</div></div>`;
+    return;
+  }
+
+  recordsContainer.innerHTML = items
+    .map(
+      (item) => `
+        <button class="list-item search-result-button" data-open-screen="${item.screen}" type="button">
+          <div class="list-item-top">
+            <div class="item-title">${escapeHtml(item.title)}</div>
+            <span class="tag info">${escapeHtml(item.type)}</span>
+          </div>
+          <div class="item-meta">${escapeHtml(item.detail)}</div>
+          <div class="item-meta">${escapeHtml(formatDateTime(item.date))}</div>
+        </button>
+      `
+    )
+    .join("");
+}
+
+async function buildDecisionAssistantReport(focus = "") {
+  const [
+    runs,
+    tasks,
+    failures,
+    notes,
+    results,
+    protocols,
+    papers,
+    citations,
+    calendarEvents,
+  ] = await Promise.all([
+    getAllRecords("experimentRuns"),
+    getAllRecords("tasks"),
+    getAllRecords("failures"),
+    getAllRecords("labNotes"),
+    getAllRecords("resultFiles"),
+    getAllRecords("protocols"),
+    getAllRecords("paperSummaries"),
+    getAllRecords("citations"),
+    getAllRecords("calendar"),
+  ]);
+
+  const query = String(focus || "").trim().toLowerCase();
+  const isRelevant = (record, fields) => !query || matchesSearch(record, query, fields);
+
+  const relevantRuns = runs.filter((record) =>
+    isRelevant(record, ["title", "project", "protocolTitle", "objective", "sampleIds", "notes", "status"])
+  );
+  const relevantTasks = tasks.filter((record) =>
+    isRelevant(record, ["title", "priority", "status", "dueDate"])
+  );
+  const relevantFailures = failures.filter((record) =>
+    isRelevant(record, ["what", "why", "solution"])
+  );
+  const relevantNotes = notes.filter((record) =>
+    isRelevant(record, ["title", "experimentName", "tags", "observations", "results", "nextSteps"])
+  );
+  const relevantResults = results.filter((record) =>
+    isRelevant(record, ["project", "title", "resultType", "orderLabel", "tags", "notes", "fileName"])
+  );
+  const relevantProtocols = protocols.filter((record) =>
+    isRelevant(record, ["title", "category", "objective", "materials", "steps", "safetyNotes"])
+  );
+  const relevantPapers = papers.filter((record) =>
+    isRelevant(record, ["title", "authors", "findings", "methods", "importance", "quotes"])
+  );
+  const relevantCitations = citations.filter((record) =>
+    isRelevant(record, ["title", "authors", "journal", "doi", "url", "style", "project", "chapter", "citationKey", "usedIn", "usedFor", "evidence", "notes"])
+  );
+  const relevantCalendar = calendarEvents.filter((record) =>
+    isRelevant(record, ["title", "date", "time", "notes"])
+  );
+
+  const suggestions = [];
+  const evidence = [];
+  const pendingTasks = relevantTasks.filter((task) => task.status !== "Done");
+  const runningRuns = relevantRuns.filter((run) => run.status === "Running");
+  const completedRuns = relevantRuns.filter((run) => run.status === "Completed");
+
+  if (!relevantProtocols.length) {
+    suggestions.push({
+      title: "Create or refine a protocol before the next run",
+      detail: "A reusable protocol makes future experiments faster, more consistent, and easier to review.",
+      priority: "warning",
+    });
+    evidence.push({
+      title: "No matching protocol found",
+      detail: query
+        ? `There is no saved protocol matching "${focus}" in this workspace yet.`
+        : "There are no saved protocols in this workspace yet.",
+    });
+  }
+
+  if (pendingTasks.length) {
+    const topTask = pendingTasks.sort((a, b) => new Date(a.dueDate || 0) - new Date(b.dueDate || 0))[0];
+    suggestions.push({
+      title: "Clear the next pending task first",
+      detail: `${topTask.title || "A pending task"} is still open${topTask.dueDate ? ` and due on ${topTask.dueDate}` : ""}.`,
+      priority: "info",
+    });
+    evidence.push({
+      title: "Pending task evidence",
+      detail: `${pendingTasks.length} pending task(s) found in your workspace.`,
+    });
+  }
+
+  if (runningRuns.length) {
+    suggestions.push({
+      title: "Finish documenting the active run before starting a new one",
+      detail: "Running work is already in progress. Add observations and keep the evidence chain complete.",
+      priority: "primary",
+    });
+    evidence.push({
+      title: "Active run detected",
+      detail: `${runningRuns[0].title || "Experiment run"} is still marked as Running.`,
+    });
+  }
+
+  if (completedRuns.length && !relevantResults.length) {
+    suggestions.push({
+      title: "Store the raw or analyzed result files now",
+      detail: "You have a completed run but no matching results in the vault yet.",
+      priority: "warning",
+    });
+    evidence.push({
+      title: "Run without stored result file",
+      detail: `${completedRuns.length} completed run(s) found, but no matching results were found for this focus.`,
+    });
+  }
+
+  if (relevantNotes.length && !relevantResults.length) {
+    suggestions.push({
+      title: "Move from observations to stored evidence",
+      detail: "You already documented notes. The next useful step is to upload images, GraphPad files, tables, or spreadsheets.",
+      priority: "secondary",
+    });
+    evidence.push({
+      title: "Notes exist without result storage",
+      detail: `${relevantNotes.length} matching note(s) found, but no matching result files yet.`,
+    });
+  }
+
+  if (relevantResults.length && !relevantPapers.length) {
+    suggestions.push({
+      title: "Compare your results with at least one paper summary",
+      detail: "Add a paper summary so interpretation is linked to literature, not only to raw outputs.",
+      priority: "success",
+    });
+    evidence.push({
+      title: "Results exist without linked literature note",
+      detail: `${relevantResults.length} matching result file(s) found, but no matching paper summary yet.`,
+    });
+  }
+
+  if (relevantPapers.length && !relevantCitations.length) {
+    suggestions.push({
+      title: "Save the paper as a reusable citation before writing",
+      detail: "Capture the section used, the exact quote or result, and a BibTeX key so writing later is faster.",
+      priority: "info",
+    });
+    evidence.push({
+      title: "Literature note without citation record",
+      detail: `${relevantPapers.length} matching paper summary record(s) found, but no matching citation record yet.`,
+    });
+  }
+
+  if (relevantFailures.length) {
+    const latestFailure = relevantFailures.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+    suggestions.push({
+      title: "Turn the latest failure into a control or checklist step",
+      detail: latestFailure.solution || "Use the latest failure log to update protocol steps before the next run.",
+      priority: "warning",
+    });
+    evidence.push({
+      title: "Failure history found",
+      detail: `${relevantFailures.length} matching failure log(s) found. Latest issue: ${latestFailure.what || "Failure"}.`,
+    });
+  }
+
+  const upcomingEvent = relevantCalendar
+    .filter((event) => event.date)
+    .sort((a, b) => `${a.date} ${a.time || ""}`.localeCompare(`${b.date} ${b.time || ""}`))[0];
+  if (upcomingEvent) {
+    suggestions.push({
+      title: "Prepare for the next scheduled date now",
+      detail: `${upcomingEvent.title || "Upcoming event"} is already on your calendar${upcomingEvent.date ? ` for ${upcomingEvent.date}` : ""}.`,
+      priority: "info",
+    });
+    evidence.push({
+      title: "Calendar evidence",
+      detail: `Upcoming matching event: ${upcomingEvent.title || "Event"}${upcomingEvent.date ? ` on ${upcomingEvent.date}` : ""}.`,
+    });
+  }
+
+  if (!suggestions.length) {
+    suggestions.push({
+      title: "Your workflow looks well-covered right now",
+      detail: "Use this moment to tighten labels, backup data, or summarize the next paper before your next experiment.",
+      priority: "success",
+    });
+    evidence.push({
+      title: "No major workflow gap detected",
+      detail: query
+        ? `The current records matching "${focus}" do not show a major missing step.`
+        : "The current records do not show a major missing workflow step.",
+    });
+  }
+
+  return { suggestions, evidence };
+}
+
+async function renderDecisionAssistant() {
+  const suggestionsContainer = document.getElementById("assistant-recommendations");
+  const evidenceContainer = document.getElementById("assistant-evidence");
+  if (!suggestionsContainer || !evidenceContainer) return;
+
+  const focus = document.getElementById("assistant-focus")?.value.trim() || "";
+  const report = await buildDecisionAssistantReport(focus);
+
+  suggestionsContainer.innerHTML = report.suggestions
+    .map(
+      (item) => `
+        <div class="list-item">
+          <div class="list-item-top">
+            <div class="item-title">${escapeHtml(item.title)}</div>
+            <span class="tag ${escapeHtml(item.priority || "info")}">${escapeHtml(item.priority || "info")}</span>
+          </div>
+          <div class="item-meta">${escapeHtml(item.detail)}</div>
+        </div>
+      `
+    )
+    .join("");
+
+  evidenceContainer.innerHTML = report.evidence
+    .map(
+      (item) => `
+        <div class="list-item">
+          <div class="item-title">${escapeHtml(item.title)}</div>
+          <div class="item-meta">${escapeHtml(item.detail)}</div>
+        </div>
+      `
+    )
+    .join("");
+}
+
 async function renderLabNotes() {
   const container = document.getElementById("note-records");
   if (!container) return;
-  const records = (await getAllRecords("labNotes")).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const records = (await getAllRecords("labNotes"))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .filter((record) =>
+      matchesSearch(record, state.searchFilters.notes, [
+        "title",
+        "noteDate",
+        "experimentName",
+        "protocolTitle",
+        "tags",
+        "observations",
+        "results",
+        "nextSteps",
+      ])
+    );
   if (!records.length) {
-    container.innerHTML = `<div class="list-item"><div class="item-meta">No lab notes yet.</div></div>`;
+    container.innerHTML = `<div class="list-item"><div class="item-meta">No lab notes match this search yet.</div></div>`;
     return;
   }
   container.innerHTML = records
@@ -1848,10 +3324,23 @@ async function renderLabNotes() {
 async function renderProtocols() {
   const container = document.getElementById("protocol-records");
   if (!container) return;
-  const records = (await getAllRecords("protocols")).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const records = (await getAllRecords("protocols"))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .filter((record) =>
+      matchesSearch(record, state.searchFilters.protocols, [
+        "title",
+        "category",
+        "objective",
+        "materials",
+        "steps",
+        "duration",
+        "safetyNotes",
+      ])
+    );
   if (!records.length) {
-    container.innerHTML = `<div class="list-item"><div class="item-meta">No protocols yet.</div></div>`;
+    container.innerHTML = `<div class="list-item"><div class="item-meta">No protocols match this search yet.</div></div>`;
     await renderProtocolOptions();
+    await renderRunProtocolOptions();
     return;
   }
   container.innerHTML = records
@@ -1877,6 +3366,7 @@ async function renderProtocols() {
     )
     .join("");
   await renderProtocolOptions();
+  await renderRunProtocolOptions();
 }
 
 async function renderVoiceNotes() {
@@ -1912,9 +3402,24 @@ async function renderVoiceNotes() {
 async function renderPaperSummaries() {
   const container = document.getElementById("paper-records");
   if (!container) return;
-  const records = (await getAllRecords("paperSummaries")).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const records = (await getAllRecords("paperSummaries"))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .filter((record) =>
+      matchesSearch(record, state.searchFilters.papers, [
+        "title",
+        "authors",
+        "url",
+        "question",
+        "model",
+        "methods",
+        "findings",
+        "limitations",
+        "importance",
+        "quotes",
+      ])
+    );
   if (!records.length) {
-    container.innerHTML = `<div class="list-item"><div class="item-meta">No paper summaries yet.</div></div>`;
+    container.innerHTML = `<div class="list-item"><div class="item-meta">No paper summaries match this search yet.</div></div>`;
     return;
   }
   container.innerHTML = records
@@ -1935,6 +3440,7 @@ async function renderPaperSummaries() {
           <div class="item-meta"><strong>Limitations:</strong> ${escapeHtml(record.limitations || "")}</div>
           <div class="item-meta"><strong>Verified:</strong> ${record.verified ? "Yes" : "No"}</div>
           <div class="list-item-actions">
+            <button class="secondary-button small-button" data-paper-citation="${record.id}" type="button">Save Citation</button>
             <button class="secondary-button small-button" data-paper-open="${record.id}" type="button">Open PDF</button>
             <button class="outline-button small-button" data-paper-download="${record.id}" type="button">Download PDF</button>
           </div>
@@ -2089,16 +3595,83 @@ async function renderArticles() {
         <div class="list-item">
           <div class="list-item-top">
             <div>
-              <div class="item-title">${record.title}</div>
+              <div class="item-title">${escapeHtml(record.title || "Saved Article")}</div>
               <div class="item-meta">${formatDateTime(record.createdAt)}</div>
             </div>
             <button class="danger-button small-button" data-delete-store="articles" data-delete-id="${record.id}" type="button">Delete</button>
           </div>
+          <div class="item-meta">${escapeHtml(record.authors || "No authors")} ${record.journal ? `| ${escapeHtml(record.journal)}` : ""}</div>
           <div class="item-meta"><a href="${record.url}" target="_blank" rel="noreferrer">${record.url}</a></div>
-          <div class="item-meta">${record.summary || ""}</div>
+          <div class="item-meta">${escapeHtml(record.summary || "")}</div>
+          <div class="list-item-actions">
+            <button class="secondary-button small-button" data-article-citation="${record.id}" type="button">Save Citation</button>
+          </div>
         </div>
       `
     )
+    .join("");
+}
+
+async function renderCitations() {
+  const container = document.getElementById("citation-records");
+  if (!container) return;
+  const records = (await getAllRecords("citations"))
+    .sort(
+      (a, b) =>
+        String(a.project || "").localeCompare(String(b.project || "")) ||
+        String(a.chapter || "").localeCompare(String(b.chapter || "")) ||
+        new Date(b.createdAt) - new Date(a.createdAt)
+    )
+    .filter((record) =>
+      matchesSearch(record, state.searchFilters.citations, [
+        "title",
+        "authors",
+        "year",
+        "journal",
+        "doi",
+        "url",
+        "style",
+        "project",
+        "chapter",
+        "citationKey",
+        "usedIn",
+        "usedFor",
+        "evidence",
+        "notes",
+      ])
+    );
+  if (!records.length) {
+    container.innerHTML = `<div class="list-item"><div class="item-meta">No saved citations match this search yet.</div></div>`;
+    return;
+  }
+  container.innerHTML = records
+    .map((record) => {
+      const bibliography = buildCitationText(record, record.style);
+      return `
+        <div class="list-item">
+          <div class="list-item-top">
+            <div>
+              <div class="item-title">${escapeHtml(record.title || "Citation")}</div>
+              <div class="item-meta">${escapeHtml(record.authors || "No authors")} ${record.year ? `| ${escapeHtml(record.year)}` : ""} ${record.journal ? `| ${escapeHtml(record.journal)}` : ""}</div>
+            </div>
+            <button class="danger-button small-button" data-delete-store="citations" data-delete-id="${record.id}" type="button">Delete</button>
+          </div>
+          <div class="item-meta"><strong>Project:</strong> ${escapeHtml(record.project || "Not grouped")} ${record.chapter ? `| <strong>Chapter:</strong> ${escapeHtml(record.chapter)}` : ""}</div>
+          <div class="item-meta"><strong>Style:</strong> ${escapeHtml((record.style || "apa").toUpperCase())}</div>
+          <div class="item-meta"><strong>Key:</strong> ${escapeHtml(record.citationKey || "No key")}</div>
+          <div class="item-meta"><strong>Used in:</strong> ${escapeHtml(record.usedIn || "Not set")}</div>
+          <div class="item-meta"><strong>What I used:</strong> ${escapeHtml(record.usedFor || "Not set")}</div>
+          <div class="item-meta"><strong>Evidence:</strong> ${escapeHtml(record.evidence || "Not saved")}</div>
+          <div class="item-meta"><strong>Bibliography:</strong> ${escapeHtml(bibliography)}</div>
+          <div class="list-item-actions">
+            <button class="secondary-button small-button" data-citation-load="${record.id}" type="button">Load</button>
+            <button class="outline-button small-button" data-citation-copy="${record.id}" type="button">Copy Citation</button>
+            <button class="outline-button small-button" data-citation-copy-cite="${record.id}" type="button">Copy \\cite</button>
+            <button class="outline-button small-button" data-citation-copy-bibtex="${record.id}" type="button">Copy BibTeX</button>
+          </div>
+        </div>
+      `;
+    })
     .join("");
 }
 
@@ -2324,16 +3897,20 @@ function renderCalendarEvents(events) {
 async function renderWorkspace() {
   const metricsContainer = document.getElementById("workspace-metrics");
   const summaryContainer = document.getElementById("workspace-summary");
-  if (!metricsContainer || !summaryContainer) return;
+  const checklistContainer = document.getElementById("workspace-checklist");
+  const searchResultsContainer = document.getElementById("workspace-search-results");
+  if (!metricsContainer || !summaryContainer || !checklistContainer || !searchResultsContainer) return;
 
-  const [tasks, labNotes, protocols, results, papers, articles, calendarEvents] = await Promise.all([
+  const [tasks, labNotes, protocols, results, papers, articles, citations, calendarEvents, experimentRuns] = await Promise.all([
     getAllRecords("tasks"),
     getAllRecords("labNotes"),
     getAllRecords("protocols"),
     getAllRecords("resultFiles"),
     getAllRecords("paperSummaries"),
     getAllRecords("articles"),
+    getAllRecords("citations"),
     getAllRecords("calendar"),
+    getAllRecords("experimentRuns"),
   ]);
 
   const pendingTasks = tasks.filter((task) => task.status !== "Done").length;
@@ -2344,14 +3921,17 @@ async function renderWorkspace() {
   const latestNote = [...labNotes].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
   const latestResult = [...results].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
   const latestPaper = [...papers].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+  const latestRun = [...experimentRuns].sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))[0];
 
   const metrics = [
     { label: "Pending Tasks", value: pendingTasks, tone: "warning" },
+    { label: "Experiment Runs", value: experimentRuns.length, tone: "info" },
     { label: "Lab Notes", value: labNotes.length, tone: "info" },
     { label: "Protocols", value: protocols.length, tone: "primary" },
     { label: "Results Files", value: results.length, tone: "success" },
     { label: "Paper Summaries", value: papers.length, tone: "secondary" },
     { label: "Saved Articles", value: articles.length, tone: "primary" },
+    { label: "Citations", value: citations.length, tone: "info" },
   ];
 
   metricsContainer.innerHTML = metrics
@@ -2383,6 +3963,12 @@ async function renderWorkspace() {
         : "No lab notes saved yet",
     },
     {
+      title: "Latest experiment run",
+      meta: latestRun
+        ? `${escapeHtml(latestRun.title || "Experiment Run")} | ${escapeHtml(latestRun.status || "Draft")}`
+        : "No experiment runs saved yet",
+    },
+    {
       title: "Latest result file",
       meta: latestResult
         ? `${escapeHtml(latestResult.title || latestResult.fileName || "Result file")} | ${escapeHtml(latestResult.project || "No project")}`
@@ -2403,6 +3989,131 @@ async function renderWorkspace() {
           <div class="item-title">${item.title}</div>
           <div class="item-meta">${item.meta}</div>
         </div>
+      `
+    )
+    .join("");
+
+  const checklist = [
+    { label: "Save your researcher profile", done: Boolean(state.settings.researcherName || state.settings.researcherEmail) },
+    { label: "Create your first protocol", done: protocols.length > 0 },
+    { label: "Create your first guided experiment run", done: experimentRuns.length > 0, hint: "Use Experiment Runs to connect protocol, timing, notes, and results in one place." },
+    { label: "Save your first lab note", done: labNotes.length > 0 },
+    { label: "Store your first result file", done: results.length > 0 },
+    { label: "Draft your first paper summary", done: papers.length > 0 },
+    { label: "Save your first citation", done: citations.length > 0, hint: "Use Citation Vault to save what section you used and export bibliography or BibTeX later." },
+    { label: "Add your first calendar event", done: calendarEvents.length > 0, hint: "Use the calendar to plan real experiment dates, deadlines, and follow-up tasks." },
+  ];
+
+  checklistContainer.innerHTML = checklist
+    .map(
+      (item) => `
+        <div class="list-item">
+          <div class="list-item-top">
+            <div class="item-title">${item.done ? "Completed" : "Next step"}</div>
+            <span class="tag ${item.done ? "success" : "warning"}">${item.done ? "Done" : "Pending"}</span>
+          </div>
+          <div class="item-meta">${escapeHtml(item.label)}</div>
+          ${item.hint ? `<div class="item-meta">${escapeHtml(item.hint)}</div>` : ""}
+        </div>
+      `
+    )
+    .join("");
+
+  const query = String(state.searchFilters.workspace || "").trim().toLowerCase();
+  if (!query) {
+    searchResultsContainer.innerHTML = `<div class="list-item"><div class="item-meta">Start typing to search across experiment runs, tasks, notes, protocols, results, papers, and citations.</div></div>`;
+    return;
+  }
+
+  const searchSets = [
+    {
+      label: "Experiment Run",
+      screen: "runs",
+      records: experimentRuns.filter((record) =>
+        matchesSearch(record, query, ["title", "project", "protocolTitle", "objective", "sampleIds", "notes", "status"])
+      ),
+      title: (record) => record.title || "Experiment Run",
+      meta: (record) => `${record.project || "No project"} | ${record.status || "Draft"}`,
+    },
+    {
+      label: "Task",
+      screen: "todo",
+      records: tasks.filter((record) => matchesSearch(record, query, ["title", "priority", "status", "dueDate"])),
+      title: (record) => record.title || "Task",
+      meta: (record) => `${record.priority || "No priority"} | ${record.status || "Pending"}${record.dueDate ? ` | ${record.dueDate}` : ""}`,
+    },
+    {
+      label: "Lab Note",
+      screen: "notes",
+      records: labNotes.filter((record) =>
+        matchesSearch(record, query, ["title", "experimentName", "protocolTitle", "tags", "observations", "results", "nextSteps"])
+      ),
+      title: (record) => record.title || "Lab Note",
+      meta: (record) => `${record.experimentName || "No experiment"}${record.noteDate ? ` | ${record.noteDate}` : ""}`,
+    },
+    {
+      label: "Protocol",
+      screen: "protocols",
+      records: protocols.filter((record) =>
+        matchesSearch(record, query, ["title", "category", "objective", "materials", "steps", "safetyNotes"])
+      ),
+      title: (record) => record.title || "Protocol",
+      meta: (record) => `${record.category || "General Lab"}${record.duration ? ` | ${record.duration}` : ""}`,
+    },
+    {
+      label: "Citation",
+      screen: "citations",
+      records: citations.filter((record) =>
+        matchesSearch(record, query, ["title", "authors", "journal", "doi", "url", "style", "project", "chapter", "citationKey", "usedIn", "usedFor", "evidence", "notes"])
+      ),
+      title: (record) => record.title || "Citation",
+      meta: (record) =>
+        `${record.authors || "No authors"}${record.year ? ` | ${record.year}` : ""}${record.project ? ` | ${record.project}` : ""}${record.usedIn ? ` | ${record.usedIn}` : ""}`,
+    },
+    {
+      label: "Result",
+      screen: "results",
+      records: results.filter((record) =>
+        matchesSearch(record, query, ["project", "title", "resultType", "orderLabel", "tags", "notes", "fileName"])
+      ),
+      title: (record) => record.title || record.fileName || "Result File",
+      meta: (record) => `${record.project || "No project"} | ${record.resultType || "Other"}`,
+    },
+    {
+      label: "Paper",
+      screen: "papers",
+      records: papers.filter((record) =>
+        matchesSearch(record, query, ["title", "authors", "url", "question", "methods", "findings", "limitations", "importance", "quotes"])
+      ),
+      title: (record) => record.title || "Paper Summary",
+      meta: (record) => `${record.authors || "No authors"}${record.verified ? " | Verified" : " | Needs verification"}`,
+    },
+  ];
+
+  const searchResults = searchSets.flatMap((set) =>
+    set.records.slice(0, 3).map((record) => ({
+      label: set.label,
+      screen: set.screen,
+      title: set.title(record),
+      meta: set.meta(record),
+    }))
+  );
+
+  if (!searchResults.length) {
+    searchResultsContainer.innerHTML = `<div class="list-item"><div class="item-meta">No workspace matches found for "${escapeHtml(query)}".</div></div>`;
+    return;
+  }
+
+  searchResultsContainer.innerHTML = searchResults
+    .map(
+      (result) => `
+        <button class="list-item search-result-button" data-open-screen="${result.screen}" type="button">
+          <div class="list-item-top">
+            <div class="item-title">${escapeHtml(result.title)}</div>
+            <span class="tag info">${escapeHtml(result.label)}</span>
+          </div>
+          <div class="item-meta">${escapeHtml(result.meta)}</div>
+        </button>
       `
     )
     .join("");
@@ -2444,12 +4155,25 @@ function updateConverterResult() {
 }
 
 function openScreen(screenName) {
+  state.activeScreen = screenName;
   document.querySelectorAll(".screen").forEach((screen) => {
     screen.classList.toggle("active", screen.id === `screen-${screenName}`);
+  });
+  document.querySelectorAll("[data-nav-screen]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.navScreen === screenName);
   });
 
   if (screenName === "workspace") {
     renderWorkspace();
+  }
+  if (screenName === "runs") {
+    renderExperimentRuns();
+  }
+  if (screenName === "timeline") {
+    renderResearchTimeline();
+  }
+  if (screenName === "assistant") {
+    renderDecisionAssistant();
   }
   if (screenName === "calendar") {
     renderCalendar();
@@ -2472,6 +4196,15 @@ function openScreen(screenName) {
   }
   if (screenName === "papers") {
     renderPaperSummaries();
+  }
+}
+
+function openScreenFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const requestedScreen = params.get("screen");
+  if (!requestedScreen) return;
+  if (document.getElementById(`screen-${requestedScreen}`)) {
+    openScreen(requestedScreen);
   }
 }
 
@@ -2938,7 +4671,24 @@ function triggerDataDownload(dataUrl, filename) {
 }
 
 async function exportAllBackup() {
-  const backup = { exportedAt: new Date().toISOString(), settings: state.settings, stores: {} };
+  const backup = {
+    appName: "Lab Asis",
+    version: APP_VERSION,
+    exportedAt: new Date().toISOString(),
+    language: state.language,
+    settings: state.settings,
+    localState: {
+      cellDraft: state.cellDraft,
+      timerState: {
+        draft: state.timerDraft,
+        activeTimers: state.activeTimers,
+      },
+      pomodoro: state.pomodoro,
+      calendarView: state.calendarView,
+      resultFilters: state.resultFilters,
+    },
+    stores: {},
+  };
   for (const storeName of STORES) {
     backup.stores[storeName] = await getAllRecords(storeName);
   }
@@ -2949,22 +4699,272 @@ async function exportAllBackup() {
   );
 }
 
+async function copyText(text) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (error) {
+    console.warn("Clipboard API unavailable, using fallback.", error);
+  }
+
+  const helper = document.createElement("textarea");
+  helper.value = text;
+  helper.setAttribute("readonly", "");
+  helper.style.position = "fixed";
+  helper.style.opacity = "0";
+  document.body.append(helper);
+  helper.select();
+  const copied = document.execCommand("copy");
+  helper.remove();
+  return copied;
+}
+
+async function shareAppLink() {
+  const url = getAppShareUrl();
+  const shareData = {
+    title: "Lab Asis",
+    text: "Lab Asis is a scientific lab and research workspace for students and researchers.",
+    url,
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+      showToast("App link shared.");
+      return;
+    }
+    const copied = await copyText(url);
+    showToast(copied ? "App link copied." : url);
+  } catch (error) {
+    if (error?.name !== "AbortError") {
+      console.error(error);
+      showToast("Unable to share right now.");
+    }
+  }
+}
+
+async function copyCitationOutput(record, mode = "bibliography") {
+  if (!record) {
+    showToast("No citation selected.");
+    return;
+  }
+  const preferredStyle = normalizeCitationRecord(record).style || getSelectedCitationStyle();
+  const output =
+    mode === "bibtex"
+      ? buildBibtexEntry(record)
+      : mode === "latex"
+        ? buildLatexCite(record)
+        : buildCitationText(record, preferredStyle);
+  const copied = await copyText(output);
+  showToast(
+    copied
+      ? mode === "bibtex"
+        ? "BibTeX copied."
+        : mode === "latex"
+          ? "LaTeX cite command copied."
+          : "Bibliography text copied."
+      : "Copy failed."
+  );
+}
+
+async function exportCitationBibtexFile() {
+  const records = (await getAllRecords("citations")).map((record) => buildBibtexEntry(record));
+  if (!records.length) {
+    showToast("No citations saved yet.");
+    return;
+  }
+  downloadFile("lab-asis-citations.bib", `${records.join("\n\n")}\n`, "application/x-bibtex;charset=utf-8");
+}
+
+async function exportCitationBibliographyText() {
+  const records = await getAllRecords("citations");
+  if (!records.length) {
+    showToast("No citations saved yet.");
+    return;
+  }
+  const preferredStyle = getSelectedCitationStyle();
+  const bibliography = records
+    .sort((a, b) => String(a.authors || a.title || "").localeCompare(String(b.authors || b.title || "")))
+    .map((record, index) => `${index + 1}. ${buildCitationText(record, preferredStyle)}`)
+    .join("\n\n");
+  downloadFile("lab-asis-bibliography.txt", bibliography, "text/plain;charset=utf-8");
+}
+
+async function autofillCitationFromDoi() {
+  const doiField = document.getElementById("citation-doi");
+  const urlField = document.getElementById("citation-url");
+  const rawValue = doiField?.value.trim() || urlField?.value.trim() || "";
+  const doi = extractDoiFromInput(rawValue);
+  if (!doi) {
+    showToast("Add a valid DOI first.");
+    return;
+  }
+
+  const currentDraft = getCurrentCitationDraft() || {};
+  let merged = normalizeCitationRecord({
+    ...currentDraft,
+    doi,
+    url: currentDraft.url || `https://doi.org/${doi}`,
+  });
+
+  try {
+    const crossrefMetadata = await fetchCrossrefCitationMetadata(doi);
+    merged = mergeCitationMetadata(merged, crossrefMetadata || {});
+  } catch (error) {
+    console.warn("Crossref DOI lookup failed.", error);
+  }
+
+  try {
+    const openAlexMetadata = await fetchOpenAlexCitationMetadata(doi);
+    merged = mergeCitationMetadata(merged, openAlexMetadata || {});
+  } catch (error) {
+    console.warn("OpenAlex DOI lookup failed.", error);
+  }
+
+  if (!merged.title && !merged.authors && !merged.journal) {
+    showToast("No metadata could be loaded from this DOI.");
+    return;
+  }
+
+  merged.style = merged.style || getSelectedCitationStyle();
+  merged.citationKey = merged.citationKey || buildCitationKey(merged);
+  populateCitationForm(merged);
+  await updateCitationDuplicateWarning();
+  showToast("Citation metadata loaded from DOI.");
+}
+
+async function restoreBackupFromFile(file) {
+  if (!file) {
+    showToast("Choose a backup file first.");
+    return;
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(await file.text());
+  } catch (error) {
+    console.error(error);
+    showToast("Backup file is not valid JSON.");
+    return;
+  }
+
+  if (!payload || typeof payload !== "object" || !payload.stores || typeof payload.stores !== "object") {
+    showToast("Backup file is missing the expected Lab Asis data.");
+    return;
+  }
+
+  const importableStores = STORES.filter((storeName) => Array.isArray(payload.stores[storeName]));
+  for (const storeName of importableStores) {
+    for (const record of payload.stores[storeName]) {
+      await putRecord(storeName, record);
+    }
+  }
+
+  if (payload.settings && typeof payload.settings === "object") {
+    state.settings = {
+      researcherName: "",
+      researcherEmail: "",
+      webhooks: {},
+      ...state.settings,
+      ...payload.settings,
+    };
+    persistSettings();
+  }
+
+  if (payload.language && LANG[payload.language]) {
+    state.language = payload.language;
+    localStorage.setItem("lab-asis-language", state.language);
+    updateDirectionAndLanguage();
+  }
+
+  if (payload.localState?.cellDraft) {
+    state.cellDraft = { ...state.cellDraft, ...payload.localState.cellDraft };
+    persistCellDraft();
+  }
+
+  if (payload.localState?.timerState) {
+    const restoredTimerState = getStoredTimerState(payload.localState.timerState);
+    state.timerDraft = restoredTimerState.draft;
+    state.activeTimers = restoredTimerState.activeTimers;
+    persistTimerState();
+  }
+
+  if (payload.localState?.pomodoro) {
+    state.pomodoro = { ...state.pomodoro, ...payload.localState.pomodoro };
+    persistPomodoroState();
+  }
+
+  if (payload.localState?.calendarView) {
+    state.calendarView = { ...state.calendarView, ...payload.localState.calendarView };
+  }
+
+  if (payload.localState?.resultFilters) {
+    state.resultFilters = { ...state.resultFilters, ...payload.localState.resultFilters };
+  }
+
+  applyTranslations();
+  populateSettingsFields();
+  updateCellDraftUI();
+  normalizeActiveTimers();
+  hydrateTimerInputs();
+  renderActiveTimers();
+  hydratePomodoroInputs();
+  updatePomodoroDisplay();
+  hydrateSpectroFields();
+  renderSpectroRows();
+  renderResultFiltersFromState();
+  await Promise.all([
+    renderWorkspace(),
+    renderLabNotes(),
+    renderProtocols(),
+    renderCellRecords(),
+    renderTimerRecords(),
+    renderTasks(),
+    renderVoiceNotes(),
+    renderSpectroRecords(),
+    renderResultFiles(),
+    renderPaperSummaries(),
+    renderFailures(),
+    renderLearnings(),
+    renderArticles(),
+    renderPomodoroRecords(),
+    renderCalendar(),
+  ]);
+  showToast("Backup restored on this device.");
+}
+
 async function handleDeleteAction(target) {
   const storeName = target.dataset.deleteStore;
   const id = target.dataset.deleteId;
   if (!storeName || !id) return;
   await deleteRecord(storeName, id);
+  if (storeName === "experimentRuns" && state.currentRunId === id) {
+    await clearRunForm();
+  }
+  if (WORKSPACE_REFRESH_STORES.has(storeName)) {
+    await renderWorkspace();
+  }
   showToast("Record deleted.");
   await refreshLists(storeName);
 }
 
 async function refreshLists(storeName) {
   switch (storeName) {
+    case "experimentRuns":
+      await renderExperimentRuns();
+      await renderResearchTimeline();
+      await renderDecisionAssistant();
+      break;
     case "labNotes":
       await renderLabNotes();
+      await renderResearchTimeline();
+      await renderDecisionAssistant();
       break;
     case "protocols":
       await renderProtocols();
+      await renderResearchTimeline();
+      await renderDecisionAssistant();
       break;
     case "cellCounts":
       await renderCellRecords();
@@ -2974,6 +4974,7 @@ async function refreshLists(storeName) {
       break;
     case "tasks":
       await renderTasks();
+      await renderDecisionAssistant();
       break;
     case "voiceNotes":
       await renderVoiceNotes();
@@ -2983,24 +4984,39 @@ async function refreshLists(storeName) {
       break;
     case "resultFiles":
       await renderResultFiles();
+      await renderResearchTimeline();
+      await renderDecisionAssistant();
       break;
     case "paperSummaries":
       await renderPaperSummaries();
+      await renderResearchTimeline();
+      await renderDecisionAssistant();
       break;
     case "failures":
       await renderFailures();
+      await renderResearchTimeline();
+      await renderDecisionAssistant();
       break;
     case "learnings":
       await renderLearnings();
       break;
     case "articles":
       await renderArticles();
+      await renderResearchTimeline();
+      await renderDecisionAssistant();
+      break;
+    case "citations":
+      await renderCitations();
+      await renderResearchTimeline();
+      await renderDecisionAssistant();
       break;
     case "pomodoro":
       await renderPomodoroRecords();
       break;
     case "calendar":
       await renderCalendar();
+      await renderResearchTimeline();
+      await renderDecisionAssistant();
       break;
     default:
       break;
@@ -3012,104 +5028,120 @@ async function attachStaticHandlers() {
     button.addEventListener("click", () => openScreen(button.dataset.openScreen));
   });
 
-  document.getElementById("install-app").addEventListener("click", async () => {
-    if (!state.deferredPrompt) return;
-    state.deferredPrompt.prompt();
-    await state.deferredPrompt.userChoice;
-    state.deferredPrompt = null;
-    document.getElementById("install-app").classList.add("hidden");
-  });
-
-  window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    state.deferredPrompt = event;
-    document.getElementById("install-app").classList.remove("hidden");
-  });
-
-  document.getElementById("cell-add-1").addEventListener("click", () => {
-    state.cellDraft.totalCells += 1;
-    updateCellDraftUI();
-  });
-  document.getElementById("cell-add-5").addEventListener("click", () => {
-    state.cellDraft.totalCells += 5;
-    updateCellDraftUI();
-  });
-  document.getElementById("cell-add-10").addEventListener("click", () => {
-    state.cellDraft.totalCells += 10;
-    updateCellDraftUI();
-  });
-  document.getElementById("cell-clear").addEventListener("click", () => {
-    state.cellDraft.totalCells = 0;
-    updateCellDraftUI();
-  });
-  document.getElementById("cell-calculate").addEventListener("click", updateCellDraftUI);
-  document.getElementById("cell-squares").addEventListener("input", (event) => {
-    state.cellDraft.squares = Number(event.target.value || 10);
-    updateCellDraftUI();
-  });
-  document.getElementById("cell-dilution").addEventListener("input", (event) => {
-    state.cellDraft.dilution = Number(event.target.value || 2);
-    updateCellDraftUI();
-  });
-  document.getElementById("cell-save").addEventListener("click", async () => {
-    const record = {
-      id: makeId("cell"),
-      totalCells: state.cellDraft.totalCells,
-      squares: Number(state.cellDraft.squares || 10),
-      dilution: Number(state.cellDraft.dilution || 2),
-      result: formatCellResult(),
-      language: state.language,
-      createdAt: new Date().toISOString(),
-      researcherName: state.settings.researcherName || "",
-      researcherEmail: state.settings.researcherEmail || "",
-    };
-    await saveRecord("cellCounts", record);
-    await saveRecord("experiments", { ...record, experimentType: "cell_counter", id: makeId("exp") });
-    showToast("Cell count saved.");
-    state.cellDraft.totalCells = 0;
-    updateCellDraftUI();
-    await renderCellRecords();
-  });
-  document.getElementById("cell-export").addEventListener("click", async () => {
-    const rows = await getAllRecords("cellCounts");
-    downloadCsv("lab-asis-cell-counts.csv", rows);
-  });
-
-  document.getElementById("timer-add").addEventListener("click", submitTimerDraft);
-  document.getElementById("timer-draft-reset").addEventListener("click", resetTimerDraftForm);
-  document.getElementById("timer-export").addEventListener("click", async () => {
-    downloadCsv("lab-asis-timers.csv", await getAllRecords("timers"));
-  });
-  ["timer-name", "timer-tag", "timer-minutes", "timer-seconds"].forEach((fieldId) => {
-    document.getElementById(fieldId).addEventListener("input", syncTimerDraftFromInputs);
-  });
-  document.querySelectorAll("[data-timer-preset]").forEach((button) => {
-    button.addEventListener("click", () => applyTimerPreset(button.dataset.timerPreset));
-  });
-
-  document.getElementById("todo-add").addEventListener("click", async () => {
-    const title = document.getElementById("todo-title").value.trim();
-    if (!title) {
-      showToast("Add a task title first.");
-      return;
+  const bindSection = (label, binders) => {
+    try {
+      binders();
+    } catch (error) {
+      console.warn(`Skipped handler section: ${label}`, error);
     }
-    const record = {
-      id: makeId("task"),
-      title,
-      dueDate: document.getElementById("todo-date").value || "",
-      priority: document.getElementById("todo-priority").value,
-      status: "Pending",
-      language: state.language,
-      createdAt: new Date().toISOString(),
-    };
-    await saveRecord("tasks", record);
-    document.getElementById("todo-title").value = "";
-    document.getElementById("todo-date").value = "";
-    showToast("Task saved.");
-    await renderTasks();
+  };
+
+  bindSection("install", () => {
+    document.getElementById("install-app").addEventListener("click", async () => {
+      if (!state.deferredPrompt) return;
+      state.deferredPrompt.prompt();
+      await state.deferredPrompt.userChoice;
+      state.deferredPrompt = null;
+      document.getElementById("install-app").classList.add("hidden");
+    });
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      state.deferredPrompt = event;
+      document.getElementById("install-app").classList.remove("hidden");
+    });
   });
-  document.getElementById("todo-export").addEventListener("click", async () => {
-    downloadCsv("lab-asis-tasks.csv", await getAllRecords("tasks"));
+
+  bindSection("cell counter", () => {
+    document.getElementById("cell-add-1").addEventListener("click", () => {
+      state.cellDraft.totalCells += 1;
+      updateCellDraftUI();
+    });
+    document.getElementById("cell-add-5").addEventListener("click", () => {
+      state.cellDraft.totalCells += 5;
+      updateCellDraftUI();
+    });
+    document.getElementById("cell-add-10").addEventListener("click", () => {
+      state.cellDraft.totalCells += 10;
+      updateCellDraftUI();
+    });
+    document.getElementById("cell-clear").addEventListener("click", () => {
+      state.cellDraft.totalCells = 0;
+      updateCellDraftUI();
+    });
+    document.getElementById("cell-calculate").addEventListener("click", updateCellDraftUI);
+    document.getElementById("cell-squares").addEventListener("input", (event) => {
+      state.cellDraft.squares = Number(event.target.value || 10);
+      updateCellDraftUI();
+    });
+    document.getElementById("cell-dilution").addEventListener("input", (event) => {
+      state.cellDraft.dilution = Number(event.target.value || 2);
+      updateCellDraftUI();
+    });
+    document.getElementById("cell-save").addEventListener("click", async () => {
+      const record = {
+        id: makeId("cell"),
+        totalCells: state.cellDraft.totalCells,
+        squares: Number(state.cellDraft.squares || 10),
+        dilution: Number(state.cellDraft.dilution || 2),
+        result: formatCellResult(),
+        language: state.language,
+        createdAt: new Date().toISOString(),
+        researcherName: state.settings.researcherName || "",
+        researcherEmail: state.settings.researcherEmail || "",
+      };
+      await saveRecord("cellCounts", record);
+      await saveRecord("experiments", { ...record, experimentType: "cell_counter", id: makeId("exp") });
+      showToast("Cell count saved.");
+      state.cellDraft.totalCells = 0;
+      updateCellDraftUI();
+      await renderCellRecords();
+    });
+    document.getElementById("cell-export").addEventListener("click", async () => {
+      const rows = await getAllRecords("cellCounts");
+      downloadCsv("lab-asis-cell-counts.csv", rows);
+    });
+  });
+
+  bindSection("timers", () => {
+    document.getElementById("timer-add").addEventListener("click", submitTimerDraft);
+    document.getElementById("timer-draft-reset").addEventListener("click", resetTimerDraftForm);
+    document.getElementById("timer-export").addEventListener("click", async () => {
+      downloadCsv("lab-asis-timers.csv", await getAllRecords("timers"));
+    });
+    ["timer-name", "timer-tag", "timer-minutes", "timer-seconds"].forEach((fieldId) => {
+      document.getElementById(fieldId).addEventListener("input", syncTimerDraftFromInputs);
+    });
+    document.querySelectorAll("[data-timer-preset]").forEach((button) => {
+      button.addEventListener("click", () => applyTimerPreset(button.dataset.timerPreset));
+    });
+  });
+
+  bindSection("tasks", () => {
+    document.getElementById("todo-add").addEventListener("click", async () => {
+      const title = document.getElementById("todo-title").value.trim();
+      if (!title) {
+        showToast("Add a task title first.");
+        return;
+      }
+      const record = {
+        id: makeId("task"),
+        title,
+        dueDate: document.getElementById("todo-date").value || "",
+        priority: document.getElementById("todo-priority").value,
+        status: "Pending",
+        language: state.language,
+        createdAt: new Date().toISOString(),
+      };
+      await saveRecord("tasks", record);
+      document.getElementById("todo-title").value = "";
+      document.getElementById("todo-date").value = "";
+      showToast("Task saved.");
+      await renderTasks();
+    });
+    document.getElementById("todo-export").addEventListener("click", async () => {
+      downloadCsv("lab-asis-tasks.csv", await getAllRecords("tasks"));
+    });
   });
 
   document.getElementById("note-protocol").addEventListener("change", async (event) => {
@@ -3132,6 +5164,49 @@ async function attachStaticHandlers() {
     if (!nextStepsField.value.trim() && protocol.steps) {
       nextStepsField.value = protocol.steps;
     }
+  });
+
+  document.getElementById("run-protocol").addEventListener("change", async (event) => {
+    const protocol = await getProtocolChoiceByValue(event.target.value);
+    if (!protocol) return;
+    const titleField = document.getElementById("run-title");
+    const objectiveField = document.getElementById("run-objective");
+    const notesField = document.getElementById("run-notes");
+    if (!titleField.value.trim()) {
+      titleField.value = protocol.title;
+    }
+    if (!objectiveField.value.trim()) {
+      objectiveField.value = protocol.objective || "";
+    }
+    if (!notesField.value.trim()) {
+      notesField.value = protocol.steps || "";
+    }
+  });
+
+  document.getElementById("run-start").addEventListener("click", async () => {
+    const record = await saveExperimentRun({ status: "Running", createTimer: true });
+    if (!record) return;
+    showToast("Guided experiment run started.");
+  });
+  document.getElementById("run-save").addEventListener("click", async () => {
+    const existingRuns = await getAllRecords("experimentRuns");
+    const current = state.currentRunId ? existingRuns.find((item) => item.id === state.currentRunId) : null;
+    const record = await saveExperimentRun({ status: current?.status || "Draft" });
+    if (!record) return;
+    showToast("Experiment run snapshot saved.");
+  });
+  document.getElementById("run-complete").addEventListener("click", async () => {
+    const record = await saveExperimentRun({ status: "Completed", completeNow: true });
+    if (!record) return;
+    showToast("Experiment run completed.");
+  });
+  document.getElementById("run-send-note").addEventListener("click", sendCurrentRunToLabNotes);
+  document.getElementById("run-new").addEventListener("click", async () => {
+    await clearRunForm();
+    showToast("New run form ready.");
+  });
+  document.getElementById("run-export").addEventListener("click", async () => {
+    downloadCsv("lab-asis-experiment-runs.csv", await getAllRecords("experimentRuns"));
   });
 
   document.getElementById("note-save").addEventListener("click", async () => {
@@ -3522,6 +5597,58 @@ async function attachStaticHandlers() {
     await renderResultFiles();
   });
 
+  document.getElementById("workspace-search").addEventListener("input", async (event) => {
+    state.searchFilters.workspace = event.target.value;
+    await renderWorkspace();
+  });
+
+  document.getElementById("todo-search").addEventListener("input", async (event) => {
+    state.searchFilters.tasks = event.target.value;
+    await renderTasks();
+  });
+
+  document.getElementById("note-search").addEventListener("input", async (event) => {
+    state.searchFilters.notes = event.target.value;
+    await renderLabNotes();
+  });
+
+  document.getElementById("protocol-search").addEventListener("input", async (event) => {
+    state.searchFilters.protocols = event.target.value;
+    await renderProtocols();
+  });
+
+  addListenerIfPresent("paper-search", "input", async (event) => {
+    state.searchFilters.papers = event.target.value;
+    await renderPaperSummaries();
+  });
+
+  addListenerIfPresent("citation-search", "input", async (event) => {
+    state.searchFilters.citations = event.target.value;
+    await renderCitations();
+  });
+
+  [
+    "citation-title",
+    "citation-authors",
+    "citation-year",
+    "citation-journal",
+    "citation-doi",
+    "citation-url",
+    "citation-key",
+    "citation-project",
+    "citation-chapter",
+  ].forEach((fieldId) => {
+    addListenerIfPresent(fieldId, "input", () => {
+      updateCitationDuplicateWarning();
+    });
+  });
+
+  addListenerIfPresent("citation-style", "change", () => {
+    updateCitationDuplicateWarning();
+  });
+
+  addListenerIfPresent("citation-autofill-doi", "click", autofillCitationFromDoi);
+
   document.getElementById("paper-template").addEventListener("click", async () => {
     const sourceField = document.getElementById("paper-source-text");
     let sourceText = sourceField.value.trim();
@@ -3680,6 +5807,23 @@ async function attachStaticHandlers() {
     downloadCsv("lab-asis-pdf-summaries.csv", rows);
   });
 
+  addListenerIfPresent("paper-citation", "click", () => {
+    const hasPaperSource = [
+      document.getElementById("paper-title").value.trim(),
+      document.getElementById("paper-authors").value.trim(),
+      document.getElementById("paper-url").value.trim(),
+    ].some(Boolean);
+    if (!hasPaperSource) {
+      showToast("Add paper details first, then prepare the citation.");
+      return;
+    }
+    const draft = buildCitationDraftFromPaperForm();
+    populateCitationForm(draft);
+    updateCitationDuplicateWarning();
+    openScreen("citations");
+    showToast("Paper details loaded into Citation Vault.");
+  });
+
   document.getElementById("failure-save").addEventListener("click", async () => {
     const what = document.getElementById("failure-what").value.trim();
     const why = document.getElementById("failure-why").value.trim();
@@ -3741,20 +5885,132 @@ async function attachStaticHandlers() {
     const record = {
       id: makeId("article"),
       title,
+      authors: document.getElementById("article-authors")?.value.trim() || "",
+      journal: document.getElementById("article-journal")?.value.trim() || "",
       url,
       summary: document.getElementById("article-summary").value.trim(),
       language: state.language,
       createdAt: new Date().toISOString(),
     };
     await saveRecord("articles", record);
+    if (document.getElementById("article-authors")) document.getElementById("article-authors").value = "";
+    if (document.getElementById("article-journal")) document.getElementById("article-journal").value = "";
     document.getElementById("article-title").value = "";
     document.getElementById("article-url").value = "";
     document.getElementById("article-summary").value = "";
     showToast("Article saved.");
     await renderArticles();
   });
+  addListenerIfPresent("article-citation", "click", () => {
+    const hasArticleSource = [
+      document.getElementById("article-title").value.trim(),
+      document.getElementById("article-authors").value.trim(),
+      document.getElementById("article-url").value.trim(),
+    ].some(Boolean);
+    if (!hasArticleSource) {
+      showToast("Add article details first, then prepare the citation.");
+      return;
+    }
+    const draft = buildCitationDraftFromArticleForm();
+    populateCitationForm(draft);
+    updateCitationDuplicateWarning();
+    openScreen("citations");
+    showToast("Article details loaded into Citation Vault.");
+  });
   document.getElementById("article-export").addEventListener("click", async () => {
-    downloadCsv("lab-asis-articles.csv", await getAllRecords("articles"));
+    const rows = (await getAllRecords("articles")).map((record) => ({
+      Title: record.title || "",
+      Authors: record.authors || "",
+      Journal: record.journal || "",
+      URL: record.url || "",
+      Summary: record.summary || "",
+      CreatedAt: record.createdAt || "",
+    }));
+    downloadCsv("lab-asis-articles.csv", rows);
+  });
+
+  addListenerIfPresent("citation-save", "click", async () => {
+    const draft = getCurrentCitationDraft();
+    if (!draft?.title) {
+      showToast("Add a source title before saving the citation.");
+      return;
+    }
+    const isEditing = Boolean(draft.id);
+    const record = normalizeCitationRecord({
+      id: draft.id || makeId("cite"),
+      ...draft,
+      createdAt: new Date().toISOString(),
+    });
+    const duplicate = findDuplicateCitation(record, await getAllRecords("citations"));
+    if (duplicate) {
+      populateCitationForm(duplicate);
+      await updateCitationDuplicateWarning();
+      showToast("Duplicate detected. Existing citation loaded instead of saving another copy.");
+      await renderCitations();
+      return;
+    }
+    await saveRecord("citations", record, {
+      ...record,
+      bibliography: buildCitationText(record, record.style),
+      bibtex: buildBibtexEntry(record),
+      latex: buildLatexCite(record),
+    });
+    clearCitationForm();
+    await updateCitationDuplicateWarning();
+    showToast(isEditing ? "Citation updated." : "Citation saved.");
+    await renderCitations();
+  });
+
+  addListenerIfPresent("citation-copy", "click", async () => {
+    const draft = getCurrentCitationDraft() || getLatestSavedRecord(await getAllRecords("citations"));
+    if (!draft) {
+      showToast("Add or save a citation first.");
+      return;
+    }
+    await copyCitationOutput(draft, "bibliography");
+  });
+
+  addListenerIfPresent("citation-copy-cite", "click", async () => {
+    const draft = getCurrentCitationDraft() || getLatestSavedRecord(await getAllRecords("citations"));
+    if (!draft) {
+      showToast("Add or save a citation first.");
+      return;
+    }
+    await copyCitationOutput(draft, "latex");
+  });
+
+  addListenerIfPresent("citation-copy-bibtex", "click", async () => {
+    const draft = getCurrentCitationDraft() || getLatestSavedRecord(await getAllRecords("citations"));
+    if (!draft) {
+      showToast("Add or save a citation first.");
+      return;
+    }
+    await copyCitationOutput(draft, "bibtex");
+  });
+
+  addListenerIfPresent("citation-export-bib", "click", exportCitationBibtexFile);
+  addListenerIfPresent("citation-export-text", "click", exportCitationBibliographyText);
+  addListenerIfPresent("citation-export-csv", "click", async () => {
+    const rows = (await getAllRecords("citations")).map((record) => ({
+      Title: record.title || "",
+      Authors: record.authors || "",
+      Year: record.year || "",
+      Journal: record.journal || "",
+      DOI: record.doi || "",
+      URL: record.url || "",
+      Style: record.style || "apa",
+      Project: record.project || "",
+      Chapter: record.chapter || "",
+      CitationKey: record.citationKey || "",
+      UsedIn: record.usedIn || "",
+      UsedFor: record.usedFor || "",
+      Evidence: record.evidence || "",
+      Notes: record.notes || "",
+      LinkedSourceType: record.linkedSourceType || "",
+      LinkedSourceLabel: record.linkedSourceLabel || "",
+      CreatedAt: record.createdAt || "",
+    }));
+    downloadCsv("lab-asis-citations.csv", rows);
   });
 
   document.getElementById("calendar-prev").addEventListener("click", () => {
@@ -3885,6 +6141,7 @@ async function attachStaticHandlers() {
       await renderLearnings();
       await renderFailures();
       await renderArticles();
+      await renderCitations();
       await renderPomodoroRecords();
       await renderCalendar();
       showToast(`Language set to ${LANG[state.language]}.`);
@@ -3904,10 +6161,12 @@ async function attachStaticHandlers() {
       protocols: document.getElementById("webhook-protocols").value.trim(),
       cellCounts: document.getElementById("webhook-cellCounts").value.trim(),
       experiments: document.getElementById("webhook-experiments").value.trim(),
+      experimentRuns: document.getElementById("webhook-experimentRuns").value.trim(),
       tasks: document.getElementById("webhook-tasks").value.trim(),
       failures: document.getElementById("webhook-failures").value.trim(),
       learnings: document.getElementById("webhook-learnings").value.trim(),
       articles: document.getElementById("webhook-articles").value.trim(),
+      citations: document.getElementById("webhook-citations")?.value.trim() || "",
       voiceNotes: document.getElementById("webhook-voiceNotes").value.trim(),
       spectroTables: document.getElementById("webhook-spectroTables").value.trim(),
       resultFiles: document.getElementById("webhook-resultFiles").value.trim(),
@@ -3922,9 +6181,38 @@ async function attachStaticHandlers() {
   });
 
   document.getElementById("settings-export-backup").addEventListener("click", exportAllBackup);
+  document.getElementById("settings-copy-link").addEventListener("click", async () => {
+    const copied = await copyText(getAppShareUrl());
+    showToast(copied ? "App link copied." : "Copy failed.");
+  });
+  document.getElementById("settings-share-link").addEventListener("click", shareAppLink);
+  document.getElementById("settings-import-backup").addEventListener("click", async () => {
+    const file = document.getElementById("settings-import-backup-file").files?.[0];
+    await restoreBackupFromFile(file);
+  });
+
+  document.getElementById("run-search").addEventListener("input", (event) => {
+    state.searchFilters.runs = event.target.value || "";
+    renderExperimentRuns();
+  });
+  document.getElementById("timeline-focus").addEventListener("input", (event) => {
+    state.searchFilters.timeline = event.target.value || "";
+    renderResearchTimeline();
+  });
+  document.getElementById("timeline-refresh").addEventListener("click", renderResearchTimeline);
+  document.getElementById("assistant-generate").addEventListener("click", renderDecisionAssistant);
+  document.getElementById("assistant-clear").addEventListener("click", async () => {
+    document.getElementById("assistant-focus").value = "";
+    await renderDecisionAssistant();
+  });
 
   document.body.addEventListener("click", async (event) => {
     const target = event.target;
+    const delegatedScreenButton = target.closest(".search-result-button[data-open-screen]");
+    if (delegatedScreenButton) {
+      openScreen(delegatedScreenButton.dataset.openScreen);
+      return;
+    }
     const pomodoroOpenScreen = target.closest("[data-pomodoro-open-screen]");
     if (pomodoroOpenScreen) {
       openScreen(pomodoroOpenScreen.dataset.pomodoroOpenScreen || "pomodoro");
@@ -4032,12 +6320,66 @@ async function attachStaticHandlers() {
       triggerDataDownload(record.fileData, record.fileName || `${record.title || "lab-asis-result"}`);
       return;
     }
+    const articleCitation = target.closest("[data-article-citation]");
+    if (articleCitation) {
+      const records = await getAllRecords("articles");
+      const record = records.find((item) => item.id === articleCitation.dataset.articleCitation);
+      if (!record) return;
+      populateCitationForm(buildCitationDraftFromArticleRecord(record));
+      await updateCitationDuplicateWarning();
+      openScreen("citations");
+      showToast("Article loaded into Citation Vault.");
+      return;
+    }
+    const citationLoad = target.closest("[data-citation-load]");
+    if (citationLoad) {
+      const records = await getAllRecords("citations");
+      const record = records.find((item) => item.id === citationLoad.dataset.citationLoad);
+      if (!record) return;
+      populateCitationForm(record);
+      await updateCitationDuplicateWarning();
+      openScreen("citations");
+      showToast("Citation loaded into the editor.");
+      return;
+    }
+    const citationCopy = target.closest("[data-citation-copy]");
+    if (citationCopy) {
+      const records = await getAllRecords("citations");
+      const record = records.find((item) => item.id === citationCopy.dataset.citationCopy);
+      await copyCitationOutput(record, "bibliography");
+      return;
+    }
+    const citationCopyCite = target.closest("[data-citation-copy-cite]");
+    if (citationCopyCite) {
+      const records = await getAllRecords("citations");
+      const record = records.find((item) => item.id === citationCopyCite.dataset.citationCopyCite);
+      await copyCitationOutput(record, "latex");
+      return;
+    }
+    const citationCopyBibtex = target.closest("[data-citation-copy-bibtex]");
+    if (citationCopyBibtex) {
+      const records = await getAllRecords("citations");
+      const record = records.find((item) => item.id === citationCopyBibtex.dataset.citationCopyBibtex);
+      await copyCitationOutput(record, "bibtex");
+      return;
+    }
     const paperOpen = target.closest("[data-paper-open]");
     if (paperOpen) {
       const records = await getAllRecords("paperSummaries");
       const record = records.find((item) => item.id === paperOpen.dataset.paperOpen);
       if (!record?.pdfData) return;
       window.open(record.pdfData, "_blank", "noreferrer");
+      return;
+    }
+    const paperCitation = target.closest("[data-paper-citation]");
+    if (paperCitation) {
+      const records = await getAllRecords("paperSummaries");
+      const record = records.find((item) => item.id === paperCitation.dataset.paperCitation);
+      if (!record) return;
+      populateCitationForm(buildCitationDraftFromPaperRecord(record));
+      await updateCitationDuplicateWarning();
+      openScreen("citations");
+      showToast("Paper summary loaded into Citation Vault.");
       return;
     }
     const paperDownload = target.closest("[data-paper-download]");
@@ -4086,6 +6428,25 @@ async function attachStaticHandlers() {
       await renderProtocolOptions(id);
       openScreen("notes");
       showToast("Protocol loaded into a new lab note.");
+      return;
+    }
+    const runLoadButton = target.closest("[data-run-load]");
+    if (runLoadButton) {
+      const records = await getAllRecords("experimentRuns");
+      const record = records.find((item) => item.id === runLoadButton.dataset.runLoad);
+      if (!record) return;
+      await populateRunForm(record);
+      openScreen("runs");
+      showToast("Experiment run loaded into the builder.");
+      return;
+    }
+    const runNoteButton = target.closest("[data-run-note]");
+    if (runNoteButton) {
+      const records = await getAllRecords("experimentRuns");
+      const record = records.find((item) => item.id === runNoteButton.dataset.runNote);
+      if (!record) return;
+      await populateRunForm(record);
+      await sendCurrentRunToLabNotes();
     }
   });
 }
@@ -4097,22 +6458,42 @@ async function bootstrap() {
   updateDirectionAndLanguage();
   applyTranslations();
   populateSettingsFields();
-  updateCellDraftUI();
-  ensureDefaultNoteDate();
-  normalizeActiveTimers();
-  hydrateTimerInputs();
-  renderActiveTimers();
-  hydratePomodoroInputs();
-  updatePomodoroDisplay();
-  updateConverterResult();
-  hydrateSpectroFields();
-  renderSpectroRows();
-  renderResultFiltersFromState();
+  await attachStaticHandlers();
+  const safeBootstrapStep = async (label, task) => {
+    try {
+      await task();
+    } catch (error) {
+      console.warn(`Bootstrap step failed: ${label}`, error);
+    }
+  };
+
+  await safeBootstrapStep("cell draft ui", async () => updateCellDraftUI());
+  await safeBootstrapStep("default note date", async () => ensureDefaultNoteDate());
+  await safeBootstrapStep("active timers", async () => {
+    normalizeActiveTimers();
+    hydrateTimerInputs();
+    renderActiveTimers();
+  });
+  await safeBootstrapStep("pomodoro", async () => {
+    hydratePomodoroInputs();
+    updatePomodoroDisplay();
+  });
+  await safeBootstrapStep("converter", async () => updateConverterResult());
+  await safeBootstrapStep("spectro draft", async () => {
+    hydrateSpectroFields();
+    renderSpectroRows();
+  });
+  await safeBootstrapStep("run form", async () => clearRunForm());
+  await safeBootstrapStep("result filters", async () => renderResultFiltersFromState());
+
   startMainTimerLoop();
   startPomodoroLoop();
-  await attachStaticHandlers();
-  await Promise.all([
+
+  await Promise.allSettled([
     renderWorkspace(),
+    renderExperimentRuns(),
+    renderResearchTimeline(),
+    renderDecisionAssistant(),
     renderLabNotes(),
     renderProtocols(),
     renderCellRecords(),
@@ -4125,9 +6506,11 @@ async function bootstrap() {
     renderFailures(),
     renderLearnings(),
     renderArticles(),
+    renderCitations(),
     renderPomodoroRecords(),
     renderCalendar(),
   ]);
+  openScreenFromQuery();
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch((error) => console.error(error));

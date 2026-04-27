@@ -126,6 +126,8 @@ const TRANSLATIONS = {
   workspace_banner_title: { ta: "مصممة لسير علمي حقيقي", ar: "مصممة لسير علمي حقيقي", en: "Built for real scientific workflow", fr: "Conçu pour un vrai flux scientifique" },
   workspace_banner_copy: { ta: "استعمل اللوحة هاذي باش تشوف شنوة يلزمك الآن، وشنوة محفوظ عندك، ووين موجودة الملفات والملاحظات.", ar: "استخدم هذه اللوحة لترى ما الذي يحتاج انتباهك الآن، وما الذي حفظته بالفعل، وأين توجد ملفاتك وملاحظاتك.", en: "Use this dashboard to see what needs attention now, what knowledge you already saved, and where your files and notes are living.", fr: "Utilisez ce tableau pour voir ce qui demande votre attention, ce que vous avez déjà enregistré et où vivent vos fichiers et notes." },
   workspace_overview_title: { ta: "نظرة عامة على العمل", ar: "نظرة عامة على العمل", en: "Workspace Overview", fr: "Vue d’ensemble" },
+  research_timeline_title: { ta: "الخط الزمني للبحث", ar: "الخط الزمني للبحث", en: "Research Timeline", fr: "Chronologie de recherche" },
+  decision_assistant_title: { ta: "مساعد القرار", ar: "مساعد القرار", en: "Decision Assistant", fr: "Assistant décisionnel" },
   workspace_overview_copy: { ta: "أرقام مباشرة من سجلاتك", ar: "أرقام مباشرة من سجلاتك", en: "Live counts from your saved records", fr: "Comptes en direct depuis vos enregistrements" },
   next_up_title: { ta: "شنوة بعد", ar: "التالي", en: "Next Up", fr: "À faire ensuite" },
   next_up_copy: { ta: "شنوة يلزم يتعمل بعد", ar: "ما الذي يجب فعله بعد ذلك", en: "What to do next in the workspace", fr: "Ce qu’il faut faire ensuite" },

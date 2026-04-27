@@ -7,10 +7,37 @@
       name="description"
       content="Lab Asis is a multilingual scientific lab and research workspace for students and researchers, created by Tasnim Gassem."
     />
+    <meta name="author" content="Tasnim Gassem" />
+    <meta
+      name="keywords"
+      content="Lab Asis, scientific workspace, lab notebook, protocols, research app, students, researchers, biology, neuroscience"
+    />
     <meta name="theme-color" content="#00A898" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Lab Asis" />
+    <meta property="og:title" content="Lab Asis" />
+    <meta
+      property="og:description"
+      content="A multilingual scientific lab and research workspace for students and researchers."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Lab Asis" />
+    <meta property="og:url" content="https://tiagassem.github.io/Lab-Asis/" />
+    <meta property="og:image" content="https://tiagassem.github.io/Lab-Asis/icon.svg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Lab Asis" />
+    <meta
+      name="twitter:description"
+      content="A multilingual scientific lab and research workspace for students and researchers."
+    />
+    <meta name="twitter:image" content="https://tiagassem.github.io/Lab-Asis/icon.svg" />
+    <link rel="canonical" href="https://tiagassem.github.io/Lab-Asis/" />
     <title>Lab Asis</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -28,7 +55,69 @@
 
       <section id="timer-live-banner" class="timer-live-banner hidden" aria-live="polite"></section>
 
-      <main>
+      <div class="app-layout">
+        <aside class="app-sidebar">
+          <div class="sidebar-brand">
+            <div class="sidebar-brand-mark">LA</div>
+            <div>
+              <div class="sidebar-brand-title">Lab Asis</div>
+              <div class="sidebar-brand-copy">Scientific workflow, one place</div>
+            </div>
+          </div>
+
+          <nav class="sidebar-nav" aria-label="Workspace navigation">
+            <button class="sidebar-button active" data-open-screen="home" data-nav-screen="home" type="button">
+              <span class="sidebar-button-title">Home</span>
+              <span class="sidebar-button-copy">All sections</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="workspace" data-nav-screen="workspace" type="button">
+              <span class="sidebar-button-title">Workspace</span>
+              <span class="sidebar-button-copy">Overview and search</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="runs" data-nav-screen="runs" type="button">
+              <span class="sidebar-button-title">Experiment Runs</span>
+              <span class="sidebar-button-copy">Protocol + timer + notes</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="timeline" data-nav-screen="timeline" type="button">
+              <span class="sidebar-button-title">Research Timeline</span>
+              <span class="sidebar-button-copy">Project history</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="assistant" data-nav-screen="assistant" type="button">
+              <span class="sidebar-button-title">Decision Assistant</span>
+              <span class="sidebar-button-copy">Next steps from evidence</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="notes" data-nav-screen="notes" type="button">
+              <span class="sidebar-button-title">Lab Notes</span>
+              <span class="sidebar-button-copy">Observations and results</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="protocols" data-nav-screen="protocols" type="button">
+              <span class="sidebar-button-title">Protocols</span>
+              <span class="sidebar-button-copy">Reusable methods</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="results" data-nav-screen="results" type="button">
+              <span class="sidebar-button-title">Results Vault</span>
+              <span class="sidebar-button-copy">Files and exports</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="papers" data-nav-screen="papers" type="button">
+              <span class="sidebar-button-title">Paper Summaries</span>
+              <span class="sidebar-button-copy">Literature notes</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="citations" data-nav-screen="citations" type="button">
+              <span class="sidebar-button-title">Citation Vault</span>
+              <span class="sidebar-button-copy">Bibliography and BibTeX</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="calendar" data-nav-screen="calendar" type="button">
+              <span class="sidebar-button-title">Calendar</span>
+              <span class="sidebar-button-copy">Dates and deadlines</span>
+            </button>
+            <button class="sidebar-button" data-open-screen="language" data-nav-screen="language" type="button">
+              <span class="sidebar-button-title">Settings</span>
+              <span class="sidebar-button-copy">Language and backup</span>
+            </button>
+          </nav>
+        </aside>
+
+        <main>
         <section id="screen-home" class="screen active">
           <div class="hero-card">
             <p class="hero-kicker">Built in Tunisia for students and researchers everywhere</p>
@@ -48,6 +137,18 @@
             <button class="menu-button" data-open-screen="workspace">
               <span class="menu-title">Research Workspace</span>
               <span class="menu-subtitle">Dashboard for notes, protocols, results, papers, and next actions</span>
+            </button>
+            <button class="menu-button" data-open-screen="runs">
+              <span class="menu-title">Experiment Runs</span>
+              <span class="menu-subtitle">Guided protocol + timer + notes + results workflow</span>
+            </button>
+            <button class="menu-button" data-open-screen="timeline">
+              <span class="menu-title">Research Timeline</span>
+              <span class="menu-subtitle">Project history across notes, failures, results, and papers</span>
+            </button>
+            <button class="menu-button" data-open-screen="assistant">
+              <span class="menu-title">Decision Assistant</span>
+              <span class="menu-subtitle">Evidence-based next lab steps from your saved work</span>
             </button>
             <button class="menu-button" data-open-screen="cell">
               <span class="menu-title" data-i18n="home_cellcounter">Cell Counter</span>
@@ -97,13 +198,17 @@
               <span class="menu-title">Paper Summaries</span>
               <span class="menu-subtitle">Trusted article notes with source text, quotes, methods, and conclusions</span>
             </button>
+            <button class="menu-button" data-open-screen="citations">
+              <span class="menu-title">Citation Vault</span>
+              <span class="menu-subtitle">Save references, what you used from each source, and export bibliography or BibTeX</span>
+            </button>
             <button class="menu-button" data-open-screen="calendar">
               <span class="menu-title" data-i18n="home_calendar">Calendar</span>
               <span class="menu-subtitle">Experiment dates and notes</span>
             </button>
             <button class="menu-button" data-open-screen="pomodoro">
               <span class="menu-title" data-i18n="home_pomodoro">Pomodoro</span>
-              <span class="menu-subtitle">25/5 focus sessions</span>
+              <span class="menu-subtitle">Custom focus sessions and breaks</span>
             </button>
             <button class="menu-button" data-open-screen="language">
               <span class="menu-title" data-i18n="language_button">Language</span>
@@ -162,6 +267,9 @@
                 <span class="helper-text">Jump straight into the part of your workflow you need</span>
               </div>
               <div class="workspace-actions">
+                <button class="secondary-button" data-open-screen="runs" type="button">Open Experiment Runs</button>
+                <button class="secondary-button" data-open-screen="timeline" type="button">Open Research Timeline</button>
+                <button class="secondary-button" data-open-screen="assistant" type="button">Open Decision Assistant</button>
                 <button class="secondary-button" data-open-screen="notes" type="button">Open Lab Notes</button>
                 <button class="secondary-button" data-open-screen="protocols" type="button">Open Protocols</button>
                 <button class="secondary-button" data-open-screen="results" type="button">Open Results Vault</button>
@@ -170,6 +278,204 @@
                 <button class="secondary-button" data-open-screen="todo" type="button">Open Tasks</button>
                 <button class="secondary-button" data-open-screen="calendar" type="button">Open Calendar</button>
               </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Getting Started</h3>
+                <span class="helper-text">The fastest way to make Lab Asis useful every day</span>
+              </div>
+              <div id="workspace-checklist" class="list-stack"></div>
+            </article>
+
+            <article class="panel panel-span">
+              <div class="panel-heading">
+                <h3>Workspace Search</h3>
+                <span class="helper-text">Search runs, notes, protocols, tasks, results, and paper summaries from one place</span>
+              </div>
+              <label class="field">
+                <span>Search Query</span>
+                <input id="workspace-search" type="text" placeholder="Try glioblastoma, microscopy, OD, protocol, sample ID..." />
+              </label>
+              <div id="workspace-search-results" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-runs" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2>Experiment Runs</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Guided Experiment Run</h3>
+                <span class="helper-text">Turn one protocol into one recorded session with timing, notes, and next actions.</span>
+              </div>
+              <label class="field">
+                <span>Run Title</span>
+                <input id="run-title" type="text" placeholder="Example: U251 crystal violet dose response" />
+              </label>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Project / Study</span>
+                  <input id="run-project" type="text" placeholder="Glioblastoma pilot batch A" />
+                </label>
+                <label class="field">
+                  <span>Linked Protocol</span>
+                  <select id="run-protocol">
+                    <option value="">No protocol selected</option>
+                  </select>
+                </label>
+              </div>
+              <label class="field">
+                <span>Objective / Question</span>
+                <textarea id="run-objective" rows="2" placeholder="What are you testing or trying to verify in this run?"></textarea>
+              </label>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Sample IDs / Groups</span>
+                  <input id="run-samples" type="text" placeholder="Control, NSC 0.1, NSC 0.5, NSC 1" />
+                </label>
+                <label class="field">
+                  <span>Planned Minutes</span>
+                  <input id="run-duration" type="number" min="1" value="30" />
+                </label>
+              </div>
+              <label class="field">
+                <span>Run Notes</span>
+                <textarea id="run-notes" rows="4" placeholder="Setup details, reagents, deviations, controls, operator notes..."></textarea>
+              </label>
+              <div class="run-checklist">
+                <label class="checkbox-field">
+                  <input id="run-check-setup" type="checkbox" />
+                  <span>Setup, reagents, and labeling are ready</span>
+                </label>
+                <label class="checkbox-field">
+                  <input id="run-check-timer" type="checkbox" />
+                  <span>Timer has been launched for the critical step</span>
+                </label>
+                <label class="checkbox-field">
+                  <input id="run-check-note" type="checkbox" />
+                  <span>Observations are documented in Lab Notes</span>
+                </label>
+                <label class="checkbox-field">
+                  <input id="run-check-result" type="checkbox" />
+                  <span>Raw or analyzed results are stored in Results Vault</span>
+                </label>
+              </div>
+              <div class="button-row">
+                <button class="primary-button" id="run-start" type="button">Start Guided Run</button>
+                <button class="success-button" id="run-save" type="button">Save Snapshot</button>
+                <button class="secondary-button" id="run-complete" type="button">Complete Run</button>
+                <button class="outline-button" id="run-new" type="button">New Run</button>
+              </div>
+              <div class="button-row">
+                <button class="outline-button" id="run-send-note" type="button">Send to Lab Notes</button>
+                <button class="outline-button" id="run-export" type="button">Save to Excel</button>
+                <button class="outline-button" data-export-pdf="experimentRuns" data-export-title="Experiment Runs Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Saved Experiment Runs</h3>
+                <span class="helper-text">Use this as your run history and reopen any session when you need context.</span>
+              </div>
+              <label class="field">
+                <span>Search Runs</span>
+                <input id="run-search" type="text" placeholder="Search title, project, protocol, sample, or status" />
+              </label>
+              <div id="run-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-timeline" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2>Research Timeline</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Timeline Filter</h3>
+                <span class="helper-text">Link papers, protocols, failures, results, runs, and notes into one project story.</span>
+              </div>
+              <label class="field">
+                <span>Project / Keyword</span>
+                <input id="timeline-focus" type="text" placeholder="Try glioblastoma, U251, microscopy, staining, OD..." />
+              </label>
+              <div class="button-row">
+                <button class="secondary-button" id="timeline-refresh" type="button">Refresh Timeline</button>
+                <button class="outline-button" data-open-screen="runs" type="button">Open Experiment Runs</button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Timeline Summary</h3>
+                <span class="helper-text">A quick read on how complete the project trail is right now.</span>
+              </div>
+              <div id="timeline-summary" class="list-stack"></div>
+            </article>
+
+            <article class="panel panel-span">
+              <div class="panel-heading">
+                <h3>Project History</h3>
+                <span class="helper-text">Sorted from newest to oldest, across your connected scientific records.</span>
+              </div>
+              <div id="timeline-records" class="list-stack timeline-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-assistant" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2>Scientific Decision Assistant</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Evidence-Based Guidance</h3>
+                <span class="helper-text">This does not invent science. It reads your saved evidence and points to the next strongest action.</span>
+              </div>
+              <label class="field">
+                <span>Focus Project / Question</span>
+                <input id="assistant-focus" type="text" placeholder="Example: U251 viability, microscopy staining, OD table cleanup" />
+              </label>
+              <div class="button-row">
+                <button class="primary-button" id="assistant-generate" type="button">Generate Next Steps</button>
+                <button class="outline-button" id="assistant-clear" type="button">Clear</button>
+              </div>
+              <ul class="plain-list">
+                <li>Uses your saved protocols, notes, tasks, failures, results, calendar, and papers.</li>
+                <li>Looks for gaps, repeated problems, missing evidence, and unfinished workflow steps.</li>
+                <li>Best for planning the next lab action, not for replacing expert supervision or medical advice.</li>
+              </ul>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <h3>Suggested Next Steps</h3>
+                <span class="helper-text">The top recommendations are ordered by urgency and workflow value.</span>
+              </div>
+              <div id="assistant-recommendations" class="list-stack"></div>
+            </article>
+
+            <article class="panel panel-span">
+              <div class="panel-heading">
+                <h3>Why These Suggestions Appeared</h3>
+                <span class="helper-text">Traceable evidence from your own stored records.</span>
+              </div>
+              <div id="assistant-evidence" class="list-stack"></div>
             </article>
           </div>
         </section>
@@ -341,6 +647,10 @@
                   </button>
                 </div>
               </div>
+              <label class="field">
+                <span>Search Tasks</span>
+                <input id="todo-search" type="text" placeholder="Search by title, priority, or date" />
+              </label>
               <div id="todo-records" class="list-stack"></div>
             </article>
           </div>
@@ -476,6 +786,10 @@
 
             <article class="panel">
               <h3>Saved Lab Notes</h3>
+              <label class="field">
+                <span>Search Lab Notes</span>
+                <input id="note-search" type="text" placeholder="Search title, protocol, tags, experiment, or findings" />
+              </label>
               <div id="note-records" class="list-stack"></div>
             </article>
           </div>
@@ -534,6 +848,10 @@
 
             <article class="panel">
               <h3>Saved Protocols</h3>
+              <label class="field">
+                <span>Search Protocols</span>
+                <input id="protocol-search" type="text" placeholder="Search title, category, materials, steps, or safety" />
+              </label>
               <div id="protocol-records" class="list-stack"></div>
             </article>
           </div>
@@ -873,6 +1191,16 @@
 
             <article class="panel">
               <h3>Save an Article</h3>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Authors / Year</span>
+                  <input id="article-authors" type="text" placeholder="First author et al., 2026" />
+                </label>
+                <label class="field">
+                  <span>Journal / Source</span>
+                  <input id="article-journal" type="text" placeholder="Journal, database, or website" />
+                </label>
+              </div>
               <label class="field">
                 <span>Article Title</span>
                 <input id="article-title" type="text" />
@@ -887,6 +1215,7 @@
               </label>
               <div class="button-row">
                 <button class="success-button" id="article-save" type="button">Save Article</button>
+                <button class="secondary-button" id="article-citation" type="button">Prepare Citation</button>
                 <button class="outline-button" id="article-export" type="button" data-i18n="save_button">
                   Save to Excel
                 </button>
@@ -979,6 +1308,7 @@
               <div class="button-row">
                 <button class="secondary-button" id="paper-template" type="button">Draft Summary</button>
                 <button class="success-button" id="paper-save" type="button">Save Summary</button>
+                <button class="secondary-button" id="paper-citation" type="button">Prepare Citation</button>
                 <button class="outline-button" id="paper-export" type="button">Save to Excel</button>
                 <button class="outline-button" data-export-pdf="paperSummaries" data-export-title="PDF Summaries Report" type="button" data-i18n="save_pdf">
                   Save to PDF
@@ -987,8 +1317,134 @@
             </article>
 
             <article class="panel">
-                <h3>Saved Paper Summaries</h3>
+              <h3>Saved Paper Summaries</h3>
+              <label class="field">
+                <span>Search Paper Summaries</span>
+                <input id="paper-search" type="text" placeholder="Search title, authors, methods, findings, or DOI" />
+              </label>
               <div id="paper-records" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-citations" class="screen">
+          <div class="screen-header">
+            <button class="back-button" data-open-screen="home" type="button" data-i18n="back_button">Back</button>
+            <h2>Citation Vault</h2>
+          </div>
+
+          <div class="panel-grid">
+            <article class="panel">
+              <h3>Capture a Citation</h3>
+              <p class="helper-text">
+                Save the source, the exact part you used, and where you used it. Then copy bibliography text for Google Docs
+                or export BibTeX and a ready-to-paste <code>\cite{key}</code> command for LaTeX.
+              </p>
+              <label class="field">
+                <span>Linked source</span>
+                <input id="citation-linked-source" type="text" placeholder="Manual citation or linked article / paper" readonly />
+              </label>
+              <input id="citation-editing-id" type="hidden" />
+              <input id="citation-linked-id" type="hidden" />
+              <input id="citation-linked-type" type="hidden" />
+              <label class="field">
+                <span>Source Title</span>
+                <input id="citation-title" type="text" />
+              </label>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Authors</span>
+                  <input id="citation-authors" type="text" placeholder="Smith J.; Ben Ali S." />
+                </label>
+                <label class="field">
+                  <span>Year</span>
+                  <input id="citation-year" type="text" inputmode="numeric" placeholder="2026" />
+                </label>
+              </div>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Journal / Source</span>
+                  <input id="citation-journal" type="text" placeholder="Journal, database, or website" />
+                </label>
+                <label class="field">
+                  <span>Citation key</span>
+                  <input id="citation-key" type="text" placeholder="smith2026glioblastoma" />
+                </label>
+              </div>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>DOI</span>
+                  <input id="citation-doi" type="text" placeholder="10.xxxx/xxxxx" />
+                </label>
+                <label class="field">
+                  <span>URL</span>
+                  <input id="citation-url" type="url" placeholder="https://..." />
+                </label>
+              </div>
+              <div class="button-row">
+                <button class="secondary-button" id="citation-autofill-doi" type="button">Auto-fill from DOI</button>
+              </div>
+              <p class="helper-text">
+                DOI auto-fill uses Crossref first and OpenAlex as fallback when needed.
+              </p>
+              <div class="time-input-grid">
+                <label class="field">
+                  <span>Bibliography style</span>
+                  <select id="citation-style">
+                    <option value="apa">APA</option>
+                    <option value="vancouver">Vancouver</option>
+                    <option value="mla">MLA</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Project / Collection</span>
+                  <input id="citation-project" type="text" placeholder="Thesis, review, cell culture project..." />
+                </label>
+              </div>
+              <label class="field">
+                <span>Chapter / Writing file</span>
+                <input id="citation-chapter" type="text" placeholder="Introduction, Chapter 2, protocol appendix..." />
+              </label>
+              <label class="field">
+                <span>Used in section</span>
+                <input id="citation-used-in" type="text" placeholder="Introduction, discussion, protocol note, thesis chapter..." />
+              </label>
+              <label class="field">
+                <span>What I used from this source</span>
+                <textarea id="citation-used-for" rows="3" placeholder="What idea, method, result, or claim did you take from this source?"></textarea>
+              </label>
+              <label class="field">
+                <span>Exact quote / data used</span>
+                <textarea id="citation-evidence" rows="4" placeholder="Paste the exact sentence, value, or result you used."></textarea>
+              </label>
+              <label class="field">
+                <span>Notes or tags</span>
+                <textarea id="citation-notes" rows="3" placeholder="Optional tags, project, chapter, or reminder"></textarea>
+              </label>
+              <div id="citation-duplicate-warning" class="helper-text hidden"></div>
+              <div class="button-row">
+                <button class="success-button" id="citation-save" type="button">Save Citation</button>
+                <button class="secondary-button" id="citation-copy" type="button">Copy Bibliography</button>
+                <button class="outline-button" id="citation-copy-cite" type="button">Copy LaTeX Cite</button>
+                <button class="outline-button" id="citation-copy-bibtex" type="button">Copy BibTeX</button>
+              </div>
+              <div class="button-row">
+                <button class="outline-button" id="citation-export-bib" type="button">Export .bib</button>
+                <button class="outline-button" id="citation-export-text" type="button">Export Bibliography TXT</button>
+                <button class="outline-button" id="citation-export-csv" type="button">Export Citation CSV</button>
+                <button class="outline-button" data-export-pdf="citations" data-export-title="Citation Vault Report" type="button" data-i18n="save_pdf">
+                  Save to PDF
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h3>Saved Citations</h3>
+              <label class="field">
+                <span>Search Citations</span>
+                <input id="citation-search" type="text" placeholder="Search author, title, DOI, key, section, or what you used" />
+              </label>
+              <div id="citation-records" class="list-stack"></div>
             </article>
           </div>
         </section>
@@ -1171,6 +1627,10 @@
                   <input id="webhook-experiments" type="url" placeholder="https://hook.us2.make.com/..." />
                 </label>
                 <label class="field">
+                  <span>ExperimentRuns webhook</span>
+                  <input id="webhook-experimentRuns" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
                   <span>Tasks webhook</span>
                   <input id="webhook-tasks" type="url" placeholder="https://hook.us2.make.com/..." />
                 </label>
@@ -1185,6 +1645,10 @@
                 <label class="field">
                   <span>Articles webhook</span>
                   <input id="webhook-articles" type="url" placeholder="https://hook.us2.make.com/..." />
+                </label>
+                <label class="field">
+                  <span>Citations webhook</span>
+                  <input id="webhook-citations" type="url" placeholder="https://hook.us2.make.com/..." />
                 </label>
                 <label class="field">
                   <span>VoiceNotes webhook</span>
@@ -1222,6 +1686,36 @@
             </article>
 
             <article class="panel panel-span">
+              <h3 data-i18n="publish_and_backup">Publishing, Sharing, and Backup</h3>
+              <p class="helper-text" data-i18n="publish_ready_help">
+                Use your public app link to share Lab Asis, and keep a full backup so your data can move safely between devices.
+              </p>
+              <label class="field">
+                <span data-i18n="public_app_link">Public App Link</span>
+                <input id="settings-app-link" type="url" readonly />
+              </label>
+              <p class="helper-text" data-i18n="public_link_note">
+                This is the link you can post on LinkedIn, send to colleagues, or install from a phone browser.
+              </p>
+              <div class="button-row">
+                <button class="secondary-button" id="settings-copy-link" type="button">Copy App Link</button>
+                <button class="outline-button" id="settings-share-link" type="button">Share App</button>
+              </div>
+
+              <label class="field">
+                <span data-i18n="restore_backup_file">Restore Backup File</span>
+                <input id="settings-import-backup-file" type="file" accept=".json,application/json" />
+              </label>
+              <p class="helper-text" data-i18n="restore_backup_note">
+                Restore merges backup records into this device and overwrites matching record IDs safely.
+              </p>
+              <div class="button-row">
+                <button class="outline-button" id="settings-import-backup" type="button">Restore Backup</button>
+              </div>
+              <p class="helper-text" id="settings-version-line">Version 1.2.0</p>
+            </article>
+
+            <article class="panel panel-span">
               <h3 data-i18n="legal_title">Ownership and Legal</h3>
               <p class="helper-text" data-i18n="founder_credit">
                 Lab Asis was created by Tasnim Gassem. Copyright notice and legal pages are included for publishing.
@@ -1234,11 +1728,13 @@
             </article>
           </div>
         </section>
-      </main>
+        </main>
+      </div>
 
       <footer class="app-footer">
         <p>© 2026 Lab Asis. Created by Tasnim Gassem. All rights reserved.</p>
         <p>Made in Tunisia for scientists worldwide.</p>
+        <p id="footer-version">Version 1.2.0</p>
       </footer>
     </div>
 

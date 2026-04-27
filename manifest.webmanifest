@@ -1,17 +1,57 @@
 {
+  "id": "./",
   "name": "Lab Asis",
   "short_name": "Lab Asis",
+  "lang": "en",
+  "dir": "ltr",
   "description": "A multilingual scientific lab and research workspace for students and researchers, created by Tasnim Gassem.",
-  "start_url": "./index.html",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "orientation": "portrait-primary",
   "background_color": "#F8F9FA",
   "theme_color": "#00A898",
+  "categories": ["science", "education", "productivity", "medical"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open Workspace",
+      "short_name": "Workspace",
+      "url": "./index.html?screen=workspace",
+      "description": "Open the research workspace dashboard"
+    },
+    {
+      "name": "Open Experiment Runs",
+      "short_name": "Runs",
+      "url": "./index.html?screen=runs",
+      "description": "Start or reopen a guided experiment run"
+    },
+    {
+      "name": "Open Timers",
+      "short_name": "Timers",
+      "url": "./index.html?screen=timer",
+      "description": "Open experiment timers quickly"
+    },
+    {
+      "name": "Open Paper Summaries",
+      "short_name": "Papers",
+      "url": "./index.html?screen=papers",
+      "description": "Open paper summaries quickly"
+    },
+    {
+      "name": "Open Citation Vault",
+      "short_name": "Citations",
+      "url": "./index.html?screen=citations",
+      "description": "Open saved citations, bibliography, and BibTeX export"
     }
   ]
 }

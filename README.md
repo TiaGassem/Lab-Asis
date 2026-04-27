@@ -34,10 +34,6 @@ Lab Asis is a free installable mobile web app for students and researchers world
 - [terms.html](./terms.html) - public terms of use page
 - [copyright.html](./copyright.html) - public copyright notice page
 - [SETUP_GUIDE.md](./SETUP_GUIDE.md) - beginner setup and publishing instructions
-- [MAKE_WEBHOOK_GUIDE.md](./MAKE_WEBHOOK_GUIDE.md) - optional Google Sheets sync
-- [GOOGLE_PLAY_LAUNCH_GUIDE.md](./GOOGLE_PLAY_LAUNCH_GUIDE.md) - Play publishing path
-- [STORE_LISTING_COPY.md](./STORE_LISTING_COPY.md) - ready-to-paste app store text
-- [LINKEDIN_LAUNCH_POST.md](./LINKEDIN_LAUNCH_POST.md) - launch post draft
 - [COPYRIGHT_AND_BRAND.md](./COPYRIGHT_AND_BRAND.md) - ownership summary
 
 ## Quick Start
